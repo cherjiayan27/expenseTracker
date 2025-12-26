@@ -108,11 +108,13 @@ docs/
 ### Architecture
 - Vertical Slice Architecture (domain/data/actions/ui)
 - Server Actions for all mutations
+- **Server Action Patterns (Next.js 15 optimization)**
 - Type-safe with Zod validation
 - React cache() for request deduplication
 - Tagged cache revalidation
 - Single source of truth for auth redirects (middleware only)
 - No redirect loops (data functions return empty/error)
+- **Unified minimalist UI (Landing & Login pages)**
 - Minimal client JavaScript
 
 ## 🎯 Next Steps
@@ -126,6 +128,6 @@ docs/
 
 ---
 
-**Last Updated**: December 25, 2025  
-**Current Phase**: Step 4 Complete ✅
+**Last Updated**: December 26, 2025  
+**Current Phase**: Step 4 Complete ✅ (UI/UX Refactored)
 

@@ -88,6 +88,64 @@ export const getExpenses = cache(async () => {
 
 ---
 
-**Last Updated**: December 25, 2025  
-**Related**: Step 4 implementation
+## Server Action Patterns (Next.js 15)
+
+### Problem: Action Not Found Error
+
+**Issue**: Custom `handleSubmit` wrappers that call `formAction(formData)` manually can sometimes cause `Action not found` runtime errors in Next.js 15, especially when complex UI refactoring is involved.
+
+### Solution: Direct Action Binding
+
+**Principle**: Use `action={formAction}` directly on the `<form>` element. If custom logic is needed before submission (like prefixing a phone number), use hidden inputs or `onChange` handlers to update the form data dynamically.
+
+#### ✅ Correct Pattern:
+
+```tsx
+// PhoneLoginForm.tsx
+export function PhoneLoginForm({ onSuccess }) {
+  const { state, formAction, isPending } = useSendOtp();
+
+  return (
+    <form action={formAction}>
+      {/* Use hidden input to manage constructed data */}
+      <input type="hidden" name="phone" id="fullPhone" />
+      
+      <input
+        type="tel"
+        id="phoneDigits"
+        onChange={(e) => {
+          const hidden = document.getElementById("fullPhone");
+          hidden.value = `+65${e.target.value}`;
+        }}
+      />
+      
+      <button type="submit">Send OTP</button>
+    </form>
+  );
+}
+```
+
+#### ❌ Anti-Pattern:
+
+```tsx
+// DON'T DO THIS - Can break Action Manifest synchronization
+const handleSubmit = (formData: FormData) => {
+  const fullPhone = `+65${formData.get("phoneDigits")}`;
+  formData.set("phone", fullPhone);
+  formAction(formData); // ❌ Manual invocation
+};
+
+return <form action={handleSubmit}>...</form>;
+```
+
+### Benefits
+
+1.  **Framework Stability**: Aligns with Next.js internal action manifest tracking.
+2.  **Reliability**: Reduces "Server Action not found" errors during HMR (Hot Module Replacement).
+3.  **Simplicity**: Clearer data flow from input to action.
+
+---
+
+**Last Updated**: December 26, 2025  
+**Related**: Landing Page & Login UI Refactor
 

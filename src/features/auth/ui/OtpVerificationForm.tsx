@@ -1,13 +1,14 @@
 "use client";
 
 import { useVerifyOtp } from "../actions/useVerifyOtp";
+import { useSendOtp } from "../actions/useSendOtp";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type OtpVerificationFormProps = {
   phone: string;
-  onResend: () => void;
+  onResend?: () => void;
 };
 
 export function OtpVerificationForm({
@@ -15,65 +16,93 @@ export function OtpVerificationForm({
   onResend,
 }: OtpVerificationFormProps) {
   const { state, formAction, isPending } = useVerifyOtp();
+  const { state: resendState, formAction: resendAction, isPending: isResending } = useSendOtp();
+
+  const handleResendOtp = async () => {
+    // Create a FormData with the phone number
+    const formData = new FormData();
+    formData.append("phone", phone);
+    
+    // Call the resend action
+    resendAction(formData);
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
-        <p>OTP sent to {phone}</p>
-        <p className="mt-1 text-xs">
-          For testing: use OTP <strong>123456</strong>
-        </p>
-      </div>
+    <form action={formAction} className="flex flex-col items-center w-full max-w-md mx-auto">
+      {/* Hidden field to pass phone number */}
+      <input type="hidden" name="phone" value={phone} />
 
-      <form action={formAction} className="space-y-4">
-        {/* Hidden field to pass phone number */}
-        <input type="hidden" name="phone" value={phone} />
-
-        <div className="space-y-2">
-          <Label htmlFor="token">Enter OTP</Label>
-          <Input
-            type="text"
-            id="token"
-            name="token"
-            placeholder="123456"
-            pattern="[0-9]{6}"
-            maxLength={6}
-            required
-            disabled={isPending}
-            autoComplete="one-time-code"
-            inputMode="numeric"
-            aria-describedby={!state.success && state.error ? "otp-error" : undefined}
-          />
-          <p className="text-xs text-gray-500">Enter the 6-digit code</p>
-        </div>
-
-        {!state.success && state.error && (
-          <div
-            id="otp-error"
-            className="rounded-lg bg-red-50 p-3 text-sm text-red-800"
-            role="alert"
-          >
-            {state.error}
+      {/* OTP Input Section */}
+      <div className="w-full mb-6 md:mb-8">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex items-baseline justify-center w-full">
+            <input
+              type="text"
+              id="token"
+              name="token"
+              placeholder="000000"
+              pattern="[0-9]{6}"
+              maxLength={6}
+              required
+              disabled={isPending}
+              autoComplete="one-time-code"
+              inputMode="numeric"
+              className="bg-transparent text-5xl md:text-7xl font-extralight tracking-tighter text-center focus:outline-none placeholder:text-[#E5E5E0] w-[240px] md:w-[320px] transition-all duration-300"
+              aria-describedby={!state.success && state.error ? "otp-error" : undefined}
+              autoFocus
+            />
           </div>
-        )}
-
-        <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? "Verifying..." : "Verify OTP"}
-        </Button>
-      </form>
-
-      <div className="text-center">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onResend}
-          disabled={isPending}
-        >
-          Resend OTP
-        </Button>
+          <div className="h-[1px] w-48 md:w-64 bg-[#E5E5E0] transition-all duration-500" />
+        </div>
       </div>
-    </div>
+
+      {/* Error Message */}
+      {!state.success && state.error && (
+        <div
+          id="otp-error"
+          className="text-sm text-red-500 font-light tracking-tight mb-6 md:mb-8"
+          role="alert"
+        >
+          {state.error}
+        </div>
+      )}
+
+      {/* Buttons Section */}
+      <div className="flex flex-col items-center gap-6 w-full mb-6 md:mb-8">
+        <button 
+          type="submit" 
+          disabled={isPending} 
+          className="group relative inline-flex items-center justify-center px-12 md:px-14 py-4 md:py-5 bg-[#1A1A1A] text-white rounded-full transition-all duration-300 hover:bg-black hover:shadow-2xl hover:shadow-black/10 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="relative text-sm md:text-base tracking-widest uppercase font-medium">
+            {isPending ? "Verifying..." : "Verify OTP"}
+          </span>
+        </button>
+
+        <div className="flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={handleResendOtp}
+            disabled={isPending || isResending}
+            className="text-[10px] uppercase tracking-[0.3em] text-[#999990] hover:text-[#1A1A1A] transition-colors duration-300 font-medium disabled:opacity-50"
+          >
+            {isResending ? "Sending..." : "Resend OTP"}
+          </button>
+
+          {resendState.success && (
+            <div className="text-xs text-green-600 font-light tracking-tight">
+              OTP sent again! Check your phone.
+            </div>
+          )}
+
+          {!resendState.success && resendState.error && (
+            <div className="text-xs text-red-500 font-light tracking-tight">
+              {resendState.error}
+            </div>
+          )}
+        </div>
+      </div>
+    </form>
   );
 }
 

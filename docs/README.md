@@ -66,6 +66,12 @@ Technical design and patterns:
   - Authentication & redirect strategy
   - Preventing redirect loops
   - Middleware vs Server Component patterns
+  - **Server Action Patterns (Next.js 15)**
+- **[Responsive Centered Layout Pattern](RESPONSIVE-CENTERED-LAYOUT-PATTERN.md)** - UI layout best practices
+  - Viewport-based responsive sizing
+  - Mobile-first spacing strategy
+  - Z-index layering system
+  - Complete implementation examples
 
 ### Future Documentation
 

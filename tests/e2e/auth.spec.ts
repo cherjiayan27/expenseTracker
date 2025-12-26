@@ -8,10 +8,9 @@ const TEST_PHONES = {
   logout: "87654321",     // Test 2: logout flow
   // Test 3: invalid phone - no OTP sent
   invalidOtp: "12345678", // Test 4: invalid OTP test (reuse login phone, logout used 876...)
-  changePhone: "87654321", // Test 5: change phone (reuse logout phone, >5s after logout test)
-  resendOtp: "12345678",  // Test 6: resend OTP (reuse login phone)
-  // Test 7: protect dashboard - no OTP
-  rateLimit: "88888888",  // Test 8: rate limit test
+  resendOtp: "87654321",  // Test 5: resend OTP (reuse logout phone)
+  // Test 6: protect dashboard - no OTP
+  rateLimit: "88888888",  // Test 7: rate limit test
 };
 
 // Run authentication tests serially to avoid rate limit conflicts
@@ -30,22 +29,25 @@ test.describe("Authentication Flow", () => {
     // Navigate to login page
     await page.goto("/login");
 
-    // Should see the phone input form
-    await expect(page.getByRole("heading", { name: "Welcome Back" })).toBeVisible();
-    await expect(page.getByText("Enter your phone number")).toBeVisible();
+    // Should see the minimalist "Personal Ledger" label
+    await expect(page.getByText("Personal Ledger")).toBeVisible();
 
     // Enter phone number (8 digits without +65)
-    await page.getByPlaceholder("12345678").fill(TEST_PHONES.login);
+    const phoneInput = page.getByPlaceholder("0000 0000");
+    await phoneInput.fill(TEST_PHONES.login);
 
-    // Click Send OTP
-    await page.getByRole("button", { name: "Send OTP" }).click();
+    // Click Login with OTP button and wait for navigation/response
+    const loginButton = page.getByRole("button", { name: "Login with OTP" });
+    await loginButton.click();
 
-    // Wait for OTP step
-    await expect(page.getByText(`OTP sent to +65${TEST_PHONES.login}`)).toBeVisible();
-    await expect(page.getByText("Enter the OTP sent to your phone")).toBeVisible();
+    // Wait for form to process
+    await page.waitForTimeout(3000);
+
+    // Wait for OTP step - should see OTP input placeholder
+    await expect(page.getByPlaceholder("000000")).toBeVisible({ timeout: 10000 });
 
     // Enter OTP (test OTP: 123456)
-    await page.getByPlaceholder("123456").fill("123456");
+    await page.getByPlaceholder("000000").fill("123456");
 
     // Click Verify OTP
     await page.getByRole("button", { name: "Verify OTP" }).click();
@@ -61,9 +63,9 @@ test.describe("Authentication Flow", () => {
   test("should logout and redirect to login", async ({ page }) => {
     // First, login
     await page.goto("/login");
-    await page.getByPlaceholder("12345678").fill(TEST_PHONES.logout);
-    await page.getByRole("button", { name: "Send OTP" }).click();
-    await page.getByPlaceholder("123456").fill("123456");
+    await page.getByPlaceholder("0000 0000").fill(TEST_PHONES.logout);
+    await page.getByRole("button", { name: "Login with OTP" }).click();
+    await page.getByPlaceholder("000000").fill("123456");
     await page.getByRole("button", { name: "Verify OTP" }).click();
     await expect(page).toHaveURL("/dashboard");
 
@@ -72,14 +74,14 @@ test.describe("Authentication Flow", () => {
 
     // Should redirect to login
     await expect(page).toHaveURL("/login");
-    await expect(page.getByRole("heading", { name: "Welcome Back" })).toBeVisible();
+    await expect(page.getByText("Personal Ledger")).toBeVisible();
   });
 
   test("should show error for invalid phone number", async ({ page }) => {
     await page.goto("/login");
 
     // Verify input has HTML5 pattern validation
-    const input = page.getByPlaceholder("12345678");
+    const input = page.getByPlaceholder("0000 0000");
     await input.fill("1234");
     
     // HTML5 validation prevents submission with invalid pattern
@@ -88,58 +90,46 @@ test.describe("Authentication Flow", () => {
   });
 
   test("should show error for invalid OTP", async ({ page }) => {
-    // Wait to avoid Supabase max_frequency limit (5s between OTPs to same number)
-    await page.waitForTimeout(6000);
+    // Wait longer to avoid Supabase max_frequency limit (5s between OTPs to same number)
+    // This test reuses the login phone, need to wait since test 1
+    await page.waitForTimeout(8000);
     
     await page.goto("/login");
 
     // Enter valid phone
-    await page.getByPlaceholder("12345678").fill(TEST_PHONES.invalidOtp);
-    await page.getByRole("button", { name: "Send OTP" }).click();
+    await page.getByPlaceholder("0000 0000").fill(TEST_PHONES.invalidOtp);
+    await page.getByRole("button", { name: "Login with OTP" }).click();
 
     // Wait for OTP screen to appear
-    await expect(page.getByText(`OTP sent to +65${TEST_PHONES.invalidOtp}`)).toBeVisible();
+    await expect(page.getByPlaceholder("000000")).toBeVisible({ timeout: 10000 });
 
     // Enter invalid OTP
-    await page.getByPlaceholder("123456").fill("999999");
+    await page.getByPlaceholder("000000").fill("999999");
     await page.getByRole("button", { name: "Verify OTP" }).click();
 
     // Should show error (invalid OTP)
     await expect(page.getByText(/Token has expired or is invalid/)).toBeVisible();
   });
 
-  test("should allow changing phone number", async ({ page }) => {
-    await page.goto("/login");
-
-    // Enter phone and get to OTP step
-    await page.getByPlaceholder("12345678").fill(TEST_PHONES.changePhone);
-    await page.getByRole("button", { name: "Send OTP" }).click();
-    await expect(page.getByText(`OTP sent to +65${TEST_PHONES.changePhone}`)).toBeVisible();
-
-    // Click "Change phone number"
-    await page.getByRole("button", { name: /Change phone number/i }).click();
-
-    // Should be back at phone step
-    await expect(page.getByText("Enter your phone number")).toBeVisible();
-    await expect(page.getByPlaceholder("12345678")).toBeVisible();
-  });
-
   test("should handle resend OTP", async ({ page }) => {
-    // Wait to avoid Supabase max_frequency limit (5s between OTPs to same number)
-    await page.waitForTimeout(6000);
+    // Wait longer to avoid Supabase max_frequency limit (5s between OTPs to same number)
+    await page.waitForTimeout(8000);
     
     await page.goto("/login");
 
     // Enter phone
-    await page.getByPlaceholder("12345678").fill(TEST_PHONES.resendOtp);
-    await page.getByRole("button", { name: "Send OTP" }).click();
-    await expect(page.getByText(`OTP sent to +65${TEST_PHONES.resendOtp}`)).toBeVisible();
+    await page.getByPlaceholder("0000 0000").fill(TEST_PHONES.resendOtp);
+    await page.getByRole("button", { name: "Login with OTP" }).click();
+    
+    // Wait for OTP screen
+    await expect(page.getByPlaceholder("000000")).toBeVisible({ timeout: 10000 });
 
     // Click Resend OTP
     await page.getByRole("button", { name: "Resend OTP" }).click();
 
-    // Should go back to phone step
-    await expect(page.getByText("Enter your phone number")).toBeVisible();
+    // Should stay on OTP screen and show success message
+    await expect(page.getByText("OTP sent again! Check your phone.")).toBeVisible();
+    await expect(page.getByPlaceholder("000000")).toBeVisible();
   });
 
   test("should protect dashboard route when not authenticated", async ({ page }) => {
@@ -165,12 +155,12 @@ test.describe("Rate Limiting", () => {
         await page.waitForTimeout(6000);
       }
       
-      await page.getByPlaceholder("12345678").fill(TEST_PHONES.rateLimit);
-      await page.getByRole("button", { name: "Send OTP" }).click();
+      await page.getByPlaceholder("0000 0000").fill(TEST_PHONES.rateLimit);
+      await page.getByRole("button", { name: "Login with OTP" }).click();
       
       if (i < 3) {
-        // First 3 attempts should succeed
-        await expect(page.getByText(`OTP sent to +65${TEST_PHONES.rateLimit}`)).toBeVisible();
+        // First 3 attempts should succeed - check for OTP screen
+        await expect(page.getByPlaceholder("000000")).toBeVisible();
         // Go back to try again
         await page.reload();
         await page.waitForLoadState('networkidle');

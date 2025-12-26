@@ -1,17 +1,31 @@
 import { test, expect } from "@playwright/test";
 
 // Test phone number configured in supabase/config.toml
-const TEST_PHONE = "12345678";
+// Using different phone than auth tests to avoid rate limit conflicts
+const TEST_PHONE = "99999999";
 const TEST_OTP = "123456";
+
+// Run tests serially to avoid rate limit conflicts with OTP sending
+test.describe.configure({ mode: 'serial' });
 
 test.describe("Expense Management", () => {
   test.beforeEach(async ({ page }) => {
+    // Wait 6 seconds to avoid Supabase max_frequency limit (5s between OTPs to same number)
+    // Skip on first test
+    if (test.info().title !== "should display dashboard with expense components") {
+      await page.waitForTimeout(6000);
+    }
+    
     // Login before each test
     await page.goto("/login");
-    await page.getByPlaceholder("12345678").fill(TEST_PHONE);
-    await page.getByRole("button", { name: "Send OTP" }).click();
-    await expect(page.getByText(`OTP sent to +65${TEST_PHONE}`)).toBeVisible();
-    await page.getByPlaceholder("123456").fill(TEST_OTP);
+    await page.getByPlaceholder("0000 0000").fill(TEST_PHONE);
+    await page.getByRole("button", { name: "Login with OTP" }).click();
+    
+    // Wait for the OTP to be sent and form to transition
+    await page.waitForTimeout(2000);
+    
+    await expect(page.getByPlaceholder("000000")).toBeVisible();
+    await page.getByPlaceholder("000000").fill(TEST_OTP);
     await page.getByRole("button", { name: "Verify OTP" }).click();
     await expect(page).toHaveURL("/dashboard");
   });
