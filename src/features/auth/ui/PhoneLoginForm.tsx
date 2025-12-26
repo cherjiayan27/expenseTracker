@@ -98,16 +98,6 @@ export function PhoneLoginForm({ onSuccess }: PhoneLoginFormProps) {
         </div>
       )}
 
-      {/* Success Message */}
-      {state.success && (
-        <div
-          className="text-sm text-green-600 font-light tracking-tight mb-6 md:mb-8"
-          role="status"
-        >
-          {state.data.message}
-        </div>
-      )}
-
       {/* Hidden field to pass full phone number - placed at bottom */}
       <input type="hidden" name="phone" id="fullPhone" />
 
