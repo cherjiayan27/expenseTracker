@@ -14,7 +14,7 @@ The bottom navigation bar now dynamically displays the user's selected category 
 ### Files Created
 1. **`src/features/user/actions/getNavMascots.ts`**
    - Server action to fetch user's selected mascots
-   - Returns 6-8 mascot images for navigation
+   - Returns 6-10 mascot images for navigation
    - Falls back to system defaults if user has no preferences
    - Handles unauthenticated users gracefully
 
@@ -38,7 +38,7 @@ The bottom navigation bar now dynamically displays the user's selected category 
 
 ### 1. Dynamic Mascot Display
 - Fetches user's selected mascots from `user_preferences` table
-- Displays 6-8 mascot images as navigation icons
+- Displays 6-10 mascot images as navigation icons
 - Each mascot is clickable and maintains hover/active states
 
 ### 2. Real-Time Updates
@@ -104,7 +104,7 @@ Categories Page Updates
 ### Mascot Limits
 - **Minimum selections**: 6 mascots
 - **Maximum selections**: 10 mascots
-- **Navigation display**: 6-8 mascots (first 8 are used)
+- **Navigation display**: 6-10 mascots (all selected mascots are displayed)
 
 ### Image Settings
 - **Size**: 48px × 48px

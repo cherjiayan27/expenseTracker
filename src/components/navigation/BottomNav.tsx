@@ -44,7 +44,7 @@ export function BottomNav() {
         <div className="flex items-center gap-1 min-w-max">
           {isLoading ? (
             // Loading skeleton
-            Array.from({ length: 6 }).map((_, i) => (
+            Array.from({ length: 10 }).map((_, i) => (
               <div
                 key={`skeleton-${i}`}
                 className="w-12 h-12 rounded-2xl bg-gray-100 animate-pulse flex-shrink-0"

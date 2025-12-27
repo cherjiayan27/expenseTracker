@@ -19,7 +19,7 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
       // Return default mascots for unauthenticated users
       return CATEGORY_IMAGES
         .filter((img) => img.isDefault)
-        .slice(0, 8);
+        .slice(0, 10);
     }
 
     const { data } = await supabase
@@ -37,7 +37,7 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
       const mascots = paths
         .map(path => CATEGORY_IMAGES.find(img => img.path === path))
         .filter((img): img is CategoryImage => img !== undefined)
-        .slice(0, 8);
+        .slice(0, 10);
       
       if (mascots.length >= 6) {
         return mascots;
@@ -47,14 +47,14 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
     // Fallback to default mascots
     return CATEGORY_IMAGES
       .filter((img) => img.isDefault)
-      .slice(0, 8);
+      .slice(0, 10);
       
   } catch (error) {
     console.error("Error fetching nav mascots:", error);
     // Return default mascots on error
     return CATEGORY_IMAGES
       .filter((img) => img.isDefault)
-      .slice(0, 8);
+      .slice(0, 10);
   }
 }
 
