@@ -44,6 +44,7 @@ export function CategoryCard({ image, onRemove, showRemove = false }: CategoryCa
             src={image.path}
             alt={image.name}
             fill
+            priority
             className="object-contain transition-transform duration-300 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />

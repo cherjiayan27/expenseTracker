@@ -26,7 +26,7 @@ export default function CategoriesPage() {
   const selectionCount = isLoaded ? getSelectionCount() : { current: 0, min: 6, max: 10 };
 
   // Get alternatives grouped by category
-  const alternativesByCategory: Record<ExpenseCategory, CategoryImage[]> = {} as any;
+  const alternativesByCategory: Record<ExpenseCategory, CategoryImage[]> = {} as Record<ExpenseCategory, CategoryImage[]>;
   
   if (isLoaded) {
     const categories = getCategoriesWithImages();
