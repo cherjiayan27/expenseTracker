@@ -105,6 +105,9 @@ export function useCategoryPreferences() {
         if (result.error !== "User not authenticated") {
           console.error("Failed to save preferences:", result.error);
         }
+      } else {
+        // Notify other components (like BottomNav) that preferences were updated
+        window.dispatchEvent(new CustomEvent('categoryPreferencesUpdated'));
       }
     } catch (error) {
       console.error("Error persisting preferences:", error);

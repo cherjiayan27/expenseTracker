@@ -1,39 +1,76 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, LayoutDashboard, PieChart, History, User, Search, Bell, Heart, Calendar } from "lucide-react";
+import Image from "next/image";
+import { Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getNavMascots } from "@/features/user/actions/getNavMascots";
+import type { CategoryImage } from "@/features/categories/domain/category.types";
 
 export function BottomNav() {
-  const navItems = [
-    { href: "#", icon: LayoutDashboard, label: "Home" },
-    { href: "#", icon: PieChart, label: "Analytics" },
-    { href: "#", icon: History, label: "History" },
-    { href: "#", icon: User, label: "Profile" },
-    { href: "#", icon: Search, label: "Search" },
-    { href: "#", icon: Bell, label: "Notifications" },
-    { href: "#", icon: Heart, label: "Favorites" },
-    { href: "#", icon: Calendar, label: "Calendar" },
-  ];
+  const [mascots, setMascots] = useState<CategoryImage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadMascots() {
+      try {
+        const navMascots = await getNavMascots();
+        setMascots(navMascots);
+      } catch (error) {
+        console.error("Failed to load nav mascots:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    loadMascots();
+
+    // Listen for preference updates from Categories page
+    const handlePreferenceUpdate = () => {
+      loadMascots();
+    };
+    
+    window.addEventListener('categoryPreferencesUpdated', handlePreferenceUpdate);
+    
+    return () => {
+      window.removeEventListener('categoryPreferencesUpdated', handlePreferenceUpdate);
+    };
+  }, []);
 
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 md:hidden flex items-center gap-4 w-[90vw] max-w-max">
       {/* Main Navigation Pill */}
       <nav className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-[2rem] shadow-2xl px-2 py-2 overflow-x-auto no-scrollbar flex-1">
         <div className="flex items-center gap-1 min-w-max">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-
-            return (
+          {isLoading ? (
+            // Loading skeleton
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={`skeleton-${i}`}
+                className="w-12 h-12 rounded-2xl bg-gray-100 animate-pulse flex-shrink-0"
+              />
+            ))
+          ) : (
+            mascots.map((image, index) => (
               <Link
-                key={item.label}
-                href={item.href}
-                aria-label={item.label}
-                className="flex items-center justify-center w-12 h-12 rounded-2xl text-gray-500 transition-all hover:bg-gray-50 active:scale-90 flex-shrink-0"
+                key={`${image.path}-${index}`}
+                href="#"
+                aria-label={image.name}
+                className="flex items-center justify-center w-12 h-12 rounded-2xl transition-all hover:bg-gray-50 active:scale-90 flex-shrink-0 p-1"
               >
-                <Icon className="h-6 w-6" />
+                <div className="relative w-full h-full">
+                  <Image
+                    src={image.path}
+                    alt={image.name}
+                    fill
+                    className="object-contain"
+                    sizes="48px"
+                    unoptimized
+                  />
+                </div>
               </Link>
-            );
-          })}
+            ))
+          )}
         </div>
       </nav>
 

@@ -5,6 +5,8 @@ export {
   resetCategoryMascotPreferences,
 } from "./actions/preferences.actions";
 
+export { getNavMascots } from "./actions/getNavMascots";
+
 export { useCategoryPreferences } from "./actions/useCategoryPreferences";
 
 // Types
