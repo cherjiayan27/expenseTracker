@@ -11,21 +11,34 @@ import { EXPENSE_CATEGORIES, getTodayDate } from "../domain/expense.calculations
 
 type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
 
-export function CreateExpenseForm() {
+interface CreateExpenseFormProps {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+export function CreateExpenseForm({ onSuccess, onCancel }: CreateExpenseFormProps) {
   const { state, formAction, isPending } = useCreateExpense();
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Clear form on success
+  // Clear form on success and call onSuccess callback
   useEffect(() => {
     if (state?.success) {
       formRef.current?.reset();
+      
+      // Call onSuccess callback after a brief delay to show success message
+      if (onSuccess) {
+        const timeout = setTimeout(() => {
+          onSuccess();
+        }, 500);
+        return () => clearTimeout(timeout);
+      }
     }
-  }, [state?.success]);
+  }, [state?.success, onSuccess]);
 
   const today = getTodayDate();
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 border-0 shadow-none">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
         Add New Expense
       </h2>
@@ -118,10 +131,27 @@ export function CreateExpenseForm() {
           </div>
         )}
 
-        {/* Submit Button */}
-        <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? "Adding..." : "Add Expense"}
-        </Button>
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          {onCancel && (
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onCancel}
+              disabled={isPending}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          )}
+          <Button 
+            type="submit" 
+            disabled={isPending} 
+            className="flex-1"
+          >
+            {isPending ? "Adding..." : "Add Expense"}
+          </Button>
+        </div>
       </form>
     </Card>
   );

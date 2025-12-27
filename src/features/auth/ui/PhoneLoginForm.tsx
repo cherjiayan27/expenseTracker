@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSendOtp } from "../actions/useSendOtp";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ type PhoneLoginFormProps = {
 export function PhoneLoginForm({ onSuccess }: PhoneLoginFormProps) {
   const { state, formAction, isPending } = useSendOtp();
   const phoneNumberRef = useRef("");
+  const [phoneDigits, setPhoneDigits] = useState(""); // Add controlled state
 
   // When OTP is sent successfully, call onSuccess callback
   useEffect(() => {
@@ -21,25 +22,26 @@ export function PhoneLoginForm({ onSuccess }: PhoneLoginFormProps) {
     }
   }, [state.success, onSuccess]);
 
-  // Handle form submission - ensure phone number is captured before server action
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    // Read the phone input value directly from DOM
-    const phoneInput = document.getElementById("phoneDigits") as HTMLInputElement;
-    if (phoneInput) {
-      const digits = phoneInput.value.replace(/\s/g, '');
-      const fullPhone = `+65${digits}`;
-      
-      // Update ref for later use in useEffect
-      phoneNumberRef.current = fullPhone;
-      
-      // Update hidden field for server action
-      const hiddenInput = document.getElementById("fullPhone") as HTMLInputElement;
-      if (hiddenInput) {
-        hiddenInput.value = fullPhone;
-      }
-    }
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\s/g, '');
+    setPhoneDigits(digits); // Update state
+    const fullPhone = `+65${digits}`;
+    phoneNumberRef.current = fullPhone;
     
-    // Don't prevent default - let the form action proceed
+    const fullPhoneInput = document.getElementById("fullPhone") as HTMLInputElement;
+    if (fullPhoneInput) {
+      fullPhoneInput.value = fullPhone;
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const fullPhone = `+65${phoneDigits}`;
+    phoneNumberRef.current = fullPhone;
+    
+    const hiddenInput = document.getElementById("fullPhone") as HTMLInputElement;
+    if (hiddenInput) {
+      hiddenInput.value = fullPhone;
+    }
   };
 
   return (
@@ -65,19 +67,8 @@ export function PhoneLoginForm({ onSuccess }: PhoneLoginFormProps) {
               maxLength={8}
               required
               disabled={isPending}
-              onChange={(e) => {
-                const digits = e.target.value.replace(/\s/g, '');
-                const fullPhone = `+65${digits}`;
-                
-                // Store in ref for later use
-                phoneNumberRef.current = fullPhone;
-                
-                // Update hidden field
-                const fullPhoneInput = document.getElementById("fullPhone") as HTMLInputElement;
-                if (fullPhoneInput) {
-                  fullPhoneInput.value = fullPhone;
-                }
-              }}
+              value={phoneDigits} // Make it controlled
+              onChange={handlePhoneChange}
               className="bg-transparent text-5xl md:text-7xl font-extralight tracking-tighter text-center focus:outline-none placeholder:text-[#E5E5E0] w-[240px] md:w-[320px] transition-all duration-300"
               aria-describedby={!state.success && state.error ? "phone-error" : undefined}
               autoFocus

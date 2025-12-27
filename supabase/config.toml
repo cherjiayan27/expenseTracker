@@ -246,6 +246,7 @@ max_frequency = "5s"
 "+6512345678" = "123456"
 "+6587654321" = "123456"
 "+6588888888" = "123456"
+"+6599999999" = "123456"
 
 # Configure logged in session timeouts.
 # [auth.sessions]

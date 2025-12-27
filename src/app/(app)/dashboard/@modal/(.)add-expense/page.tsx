@@ -1,33 +1,30 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { CreateExpenseForm } from "@/features/expenses/ui/CreateExpenseForm";
 
 export default function AddExpenseModal() {
   const router = useRouter();
+  
+  const handleClose = () => {
+    router.back();
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Add Expense</h2>
-          <button
-            onClick={() => router.back()}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            ✕
-          </button>
-        </div>
-        <p className="mt-2 text-gray-600">
-          Intercepting route modal (Phase 2)
-        </p>
-        <div className="mt-4 rounded-lg bg-blue-50 p-4">
-          <p className="text-sm text-blue-800">
-            This modal will be implemented in Phase 2 using parallel and
-            intercepting routes.
-          </p>
-        </div>
-      </div>
-    </div>
+    <Sheet open={true} onOpenChange={(open) => !open && handleClose()}>
+      <SheetContent 
+        side="bottom" 
+        className="h-[90vh] overflow-y-auto rounded-t-2xl [&>button]:hidden"
+        aria-describedby={undefined}
+      >
+        <SheetTitle className="sr-only">Add New Expense</SheetTitle>
+        <CreateExpenseForm 
+          onSuccess={handleClose}
+          onCancel={handleClose}
+        />
+      </SheetContent>
+    </Sheet>
   );
 }
 
