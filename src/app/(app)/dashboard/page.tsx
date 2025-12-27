@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import {
   getExpenses,
   calculateMonthToDate,
@@ -18,9 +20,18 @@ async function DashboardContent() {
 
       {/* Recent Expenses List */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Recent Expenses
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Recent Expenses
+          </h2>
+          <Link
+            href="/dashboard/add-expense"
+            className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add Expense
+          </Link>
+        </div>
         <ExpenseList expenses={recentExpenses} />
       </div>
     </>
@@ -61,10 +72,33 @@ function DashboardSkeleton() {
 
 export default function DashboardPage() {
   return (
-    <div>
-      <Suspense fallback={<DashboardSkeleton />}>
-        <DashboardContent />
-      </Suspense>
+    <div className="relative">
+      {/* High-End Grain Texture */}
+      <div className="fixed inset-0 opacity-[0.25] pointer-events-none contrast-125 brightness-100 z-0">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <filter id="noiseFilterDashboard">
+            <feTurbulence 
+              type="fractalNoise" 
+              baseFrequency="0.6" 
+              numOctaves="3" 
+              stitchTiles="stitch" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#noiseFilterDashboard)" />
+        </svg>
+      </div>
+
+      {/* Subtle Ambient Background Detail */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#F5F5F0] blur-[120px] opacity-60" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#F0F0EB] blur-[120px] opacity-40" />
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10">
+        <Suspense fallback={<DashboardSkeleton />}>
+          <DashboardContent />
+        </Suspense>
+      </div>
     </div>
   );
 }

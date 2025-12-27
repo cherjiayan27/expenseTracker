@@ -9,6 +9,9 @@ export type {
   ExpenseResult,
 } from "./domain/expense.types";
 
+// Category Types (re-exported from categories feature)
+export type { ExpenseCategory, CategoryImage } from "./domain/expense.categories";
+
 // Hooks
 export { useCreateExpense } from "./actions/useCreateExpense";
 
@@ -23,3 +26,15 @@ export { getExpenses } from "./actions/getExpenses";
 
 // Calculations (for Server Components)
 export { calculateMonthToDate, formatCurrency } from "./domain/expense.calculations";
+
+// Categories and Images (re-exported from categories feature)
+export {
+  EXPENSE_CATEGORIES,
+  CATEGORY_IMAGES,
+  getImagesByCategory,
+  getRandomCategoryImage,
+  getDefaultCategoryImage,
+  getImageByName,
+  getCategoriesWithImages,
+  categoryHasImages,
+} from "./domain/expense.categories";

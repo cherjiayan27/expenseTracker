@@ -75,16 +75,3 @@ export function getTodayDate(): string {
   const today = new Date();
   return today.toISOString().split("T")[0]!;
 }
-
-// Predefined expense categories (exported for use in UI)
-export const EXPENSE_CATEGORIES = [
-  "Food",
-  "Transport",
-  "Shopping",
-  "Entertainment",
-  "Bills",
-  "Healthcare",
-  "Education",
-  "Other",
-] as const;
-

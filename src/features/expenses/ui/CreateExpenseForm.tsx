@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { EXPENSE_CATEGORIES, getTodayDate } from "../domain/expense.calculations";
-
-type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+import { EXPENSE_CATEGORIES, type ExpenseCategory } from "../domain/expense.categories";
+import { getTodayDate } from "../domain/expense.calculations";
 
 interface CreateExpenseFormProps {
   onSuccess?: () => void;

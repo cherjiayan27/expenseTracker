@@ -1,3 +1,5 @@
+import { BottomNav } from "@/components/navigation/BottomNav";
+
 export default function DashboardLayout({
   children,
   modal,
@@ -7,8 +9,11 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      {children}
-      {modal}
+      <div className="pb-24 md:pb-0">
+        {children}
+        {modal}
+      </div>
+      <BottomNav />
     </>
   );
 }

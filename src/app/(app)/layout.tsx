@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { LogoutButton } from "@/features/auth";
-import { BottomNav } from "@/components/navigation/BottomNav";
 import { MobileHeader } from "@/components/navigation/MobileHeader";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -10,12 +9,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <MobileHeader />
       
       {/* Desktop Top Navigation - Hidden on mobile, visible on desktop */}
-      <nav className="border-b border-gray-200 bg-white hidden md:block">
+      <nav className="border-b border-gray-200 bg-white/95 backdrop-blur-sm hidden md:block relative z-10">
         <div className="mx-auto max-w-7xl px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/dashboard" className="transition-opacity hover:opacity-80">
               <span className="text-2xl font-extralight tracking-tighter text-gray-900">
-                about <span className="font-normal italic uppercase">Time</span>
+                about <span className="font-normal italic uppercase">TIME</span>
               </span>
             </Link>
             <div className="flex items-center gap-6">
@@ -26,16 +25,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 Dashboard
               </Link>
               <Link
-                href="/dashboard/add-expense"
-                className="text-sm font-medium text-blue-600 hover:text-blue-700"
-              >
-                Add Expense
-              </Link>
-              <Link
-                href="/settings"
+                href="/categories"
                 className="text-sm font-medium text-gray-700 hover:text-gray-900"
               >
-                Settings
+                Categories
               </Link>
               <LogoutButton />
             </div>
@@ -43,11 +36,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
       
-      {/* Main Content - Adjust padding for mobile (top header + bottom nav) */}
-      <main className="mx-auto max-w-7xl px-4 py-8 pb-24 md:pb-8">{children}</main>
-      
-      {/* Bottom Navigation - Visible on mobile, hidden on desktop */}
-      <BottomNav />
+      {/* Main Content */}
+      <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
     </div>
   );
 }

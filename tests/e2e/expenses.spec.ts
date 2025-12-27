@@ -68,10 +68,10 @@ test.describe("Expense Management - Bottom Sheet", () => {
 
     test("should display mobile header with hamburger menu", async ({ page }) => {
       // Verify mobile header is visible
-      await expect(page.getByText("about Time").first()).toBeVisible();
+      await expect(page.getByText("about TIME").first()).toBeVisible();
       
       // Verify hamburger menu button is visible
-      await expect(page.getByRole("button", { name: "Toggle menu" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
       
       // Verify bottom nav items
       await expect(page.getByRole("link", { name: "Home" })).toBeVisible();
@@ -83,11 +83,11 @@ test.describe("Expense Management - Bottom Sheet", () => {
 
     test("should navigate to dashboard by clicking header logo", async ({ page }) => {
       // Navigate away from dashboard first
-      await page.goto("/settings");
-      await expect(page).toHaveURL("/settings");
+      await page.goto("/categories");
+      await expect(page).toHaveURL("/categories");
       
       // Click header logo
-      await page.getByText("about Time").first().click();
+      await page.getByText("about TIME").first().click();
       
       // Should navigate back to dashboard
       await expect(page).toHaveURL("/dashboard");
@@ -95,31 +95,53 @@ test.describe("Expense Management - Bottom Sheet", () => {
 
     test("should open and close hamburger menu", async ({ page }) => {
       // Click hamburger menu
-      await page.getByRole("button", { name: "Toggle menu" }).click();
+      await page.getByRole("button", { name: "Open menu" }).click();
       
-      // Verify menu is open with Settings link
-      await expect(page.getByRole("link", { name: "Settings" })).toBeVisible();
+      // Verify menu is open with Categories link
+      await expect(page.getByRole("link", { name: "Categories" })).toBeVisible();
       
-      // Click overlay to close
-      await page.locator('.fixed.inset-0.bg-black\\/20').click();
+      // Click Close button
+      await page.getByRole("button", { name: "Close menu" }).click();
       
       // Verify menu is closed
-      await expect(page.getByRole("link", { name: "Settings" })).not.toBeVisible();
+      await expect(page.getByRole("link", { name: "Categories" })).not.toBeVisible();
     });
 
-    test("should navigate to Settings from hamburger menu", async ({ page }) => {
+    test("should navigate to Categories from hamburger menu", async ({ page }) => {
       // Open hamburger menu
-      await page.getByRole("button", { name: "Toggle menu" }).click();
+      await page.getByRole("button", { name: "Open menu" }).click();
       
-      // Click Settings
-      await page.getByRole("link", { name: "Settings" }).click();
+      // Click Categories
+      await page.getByRole("link", { name: "Categories" }).click();
       
-      // Verify navigation to settings page
-      await expect(page).toHaveURL("/settings");
+      // Verify navigation to categories page
+      await expect(page).toHaveURL("/categories");
       
       // Menu should auto-close after navigation
       await page.goto("/dashboard");
-      await expect(page.getByRole("link", { name: "Settings" })).not.toBeVisible();
+      await expect(page.getByRole("link", { name: "Categories" })).not.toBeVisible();
+    });
+
+    test("should open hamburger menu and show logout button", async ({ page }) => {
+      // Open hamburger menu
+      await page.getByRole("button", { name: "Open menu" }).click();
+      
+      // Verify Logout button is visible
+      await expect(page.getByRole("button", { name: "Logout" })).toBeVisible();
+      
+      // Verify Categories link is visible
+      await expect(page.getByRole("link", { name: "Categories" })).toBeVisible();
+    });
+
+    test("should logout from mobile menu", async ({ page }) => {
+      // Open hamburger menu
+      await page.getByRole("button", { name: "Open menu" }).click();
+      
+      // Click Logout
+      await page.getByRole("button", { name: "Logout" }).click();
+      
+      // Should redirect to login page
+      await expect(page).toHaveURL("/login");
     });
 
     test("should open bottom sheet when clicking detached Add button in mobile nav", async ({ page }) => {
@@ -202,7 +224,7 @@ test.describe("Expense Management - Bottom Sheet", () => {
       // Fill out the form
       await page.getByLabel("Amount (SGD)").fill("25.50");
       await page.getByLabel("Description").fill("Test expense from bottom sheet");
-      await page.getByLabel("Category (Optional)").selectOption("Food");
+      await page.getByLabel("Category (Optional)").selectOption("Food & Drinks");
 
       // Submit the form
       await page.getByRole("button", { name: "Add Expense" }).click();

@@ -2,64 +2,84 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Settings as SettingsIcon } from "lucide-react";
-import { LogoutButton } from "@/features/auth";
+import { Menu, X, Settings as SettingsIcon, LogOut } from "lucide-react";
+import { useLogout } from "@/features/auth";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { logout, isPending } = useLogout();
 
   return (
     <>
       {/* Mobile Header - Only visible on mobile */}
-      <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 md:hidden z-50">
+      <header className={cn(
+        "fixed top-0 left-0 right-0 bg-white border-b border-gray-200 md:hidden transition-all duration-300",
+        isMenuOpen ? "z-[100]" : "z-50"
+      )}>
         <div className="flex items-center justify-between px-4 py-3">
           <Link href="/dashboard" className="transition-opacity hover:opacity-80">
             <span className="text-xl font-extralight tracking-tighter text-gray-900">
-              about <span className="font-normal italic uppercase">Time</span>
+              about <span className="font-normal italic uppercase">TIME</span>
             </span>
           </Link>
           
           {/* Hamburger Button */}
           <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMenuOpen(true)}
             className="p-2 text-gray-700 hover:text-gray-900 focus:outline-none"
-            aria-label="Toggle menu"
+            aria-label="Open menu"
           >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            <Menu className="h-6 w-6" />
           </button>
         </div>
 
-        {/* Dropdown Menu */}
+        {/* Full-Page Overlay Menu */}
         {isMenuOpen && (
-          <>
-            {/* Overlay */}
-            <div 
-              className="fixed inset-0 bg-black/20 z-40 top-[57px]"
-              onClick={() => setIsMenuOpen(false)}
-            />
-            
-            {/* Menu Content */}
-            <div className="absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50">
-              <div className="py-2">
-                <Link
-                  href="/settings"
-                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
+          <div className="fixed inset-0 bg-white flex flex-col animate-in fade-in duration-200">
+            {/* Overlay Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <span className="text-xl font-extralight tracking-tighter text-gray-900">
+                about <span className="font-normal italic uppercase">TIME</span>
+              </span>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 text-gray-700 hover:text-gray-900 focus:outline-none"
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Menu Items */}
+            <nav className="flex-1 px-6 py-10 flex flex-col gap-8">
+              <Link
+                href="/categories"
+                className="text-2xl font-medium text-gray-900 hover:text-gray-600 transition-colors flex items-center gap-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Categories
+              </Link>
+            </nav>
+
+            {/* Bottom Section - Logout */}
+            <div className="px-6 py-8 border-t border-gray-100 mt-auto bg-gray-50/50 safe-area-inset-bottom">
+              <div className="mb-6">
+                <Button 
+                  variant="default" 
+                  className="w-full justify-center gap-3 h-14 text-lg font-medium"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    logout();
+                  }}
+                  disabled={isPending}
                 >
-                  <SettingsIcon className="h-5 w-5" />
-                  <span className="font-medium">Settings</span>
-                </Link>
-                
-                <div className="px-4 py-3 border-t border-gray-100">
-                  <LogoutButton />
-                </div>
+                  {isPending ? "Logging out..." : "Logout"}
+                </Button>
               </div>
             </div>
-          </>
+          </div>
         )}
       </header>
 
@@ -68,4 +88,3 @@ export function MobileHeader() {
     </>
   );
 }
-
