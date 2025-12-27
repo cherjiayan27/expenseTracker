@@ -16,9 +16,6 @@ export {
   categoryHasImages,
 } from "./domain/category.data";
 
-// Hooks
-export { useCategoryPreferences } from "./actions/useCategoryPreferences";
-
 // UI Components
 export { CategoryCard } from "./ui/CategoryCard";
 export { CategoryGrid } from "./ui/CategoryGrid";

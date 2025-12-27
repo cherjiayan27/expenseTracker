@@ -89,11 +89,6 @@ test.describe("Category Image Selection", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/categories");
     await page.waitForLoadState("networkidle");
-    
-    // Clear localStorage to start fresh
-    await page.evaluate(() => localStorage.clear());
-    await page.reload();
-    await page.waitForLoadState("networkidle");
   });
 
   test("should add image to default section when clicked in selection", async ({ page }) => {
@@ -101,19 +96,26 @@ test.describe("Category Image Selection", () => {
     const defaultSection = page.locator("section").first();
     const initialCount = await defaultSection.locator('[class*="group relative"]').count();
     
+    // Only proceed if not at max (10)
+    if (initialCount >= 10) {
+      test.skip();
+      return;
+    }
+    
     // Click an image in selection section
     const selectionSection = page.locator("section").last();
     const firstSelectableImage = selectionSection.locator('[class*="cursor-pointer"]').first();
+    
+    // Wait for it to be visible
+    await firstSelectableImage.waitFor({ state: "visible" });
     await firstSelectableImage.click();
     
-    // Wait a bit for state update
-    await page.waitForTimeout(300);
+    // Wait for state update and potential database save
+    await page.waitForTimeout(1000);
     
-    // Check that count increased (if not at max)
+    // Check that count increased
     const newCount = await defaultSection.locator('[class*="group relative"]').count();
-    if (initialCount < 10) {
-      expect(newCount).toBe(initialCount + 1);
-    }
+    expect(newCount).toBe(initialCount + 1);
   });
 
   test("should remove image from default section when remove button clicked", async ({ page }) => {
@@ -123,23 +125,26 @@ test.describe("Category Image Selection", () => {
     const initialCount = await defaultSection.locator('[class*="group relative"]').count();
     
     // Only try to remove if we have more than minimum (6)
-    if (initialCount > 6) {
-      const firstCard = defaultSection.locator('[class*="group relative"]').first();
-      
-      // Hover to show remove button
-      await firstCard.hover();
-      
-      // Click remove button
-      const removeButton = firstCard.locator('button[aria-label="Remove"]');
-      await removeButton.click();
-      
-      // Wait for state update
-      await page.waitForTimeout(300);
-      
-      // Check that count decreased
-      const newCount = await defaultSection.locator('[class*="group relative"]').count();
-      expect(newCount).toBe(initialCount - 1);
+    if (initialCount <= 6) {
+      test.skip();
+      return;
     }
+    
+    const firstCard = defaultSection.locator('[class*="group relative"]').first();
+    
+    // Hover to show remove button
+    await firstCard.hover();
+    
+    // Click remove button
+    const removeButton = firstCard.locator('button[aria-label="Remove"]');
+    await removeButton.click();
+    
+    // Wait for state update and potential database save
+    await page.waitForTimeout(1000);
+    
+    // Check that count decreased
+    const newCount = await defaultSection.locator('[class*="group relative"]').count();
+    expect(newCount).toBe(initialCount - 1);
   });
 
   test("should show warning when trying to exceed maximum (10 images)", async ({ page }) => {
@@ -153,19 +158,21 @@ test.describe("Category Image Selection", () => {
       if (currentCount >= 10) {
         // Try to add one more
         const nextImage = selectionSection.locator('[class*="cursor-pointer"]').first();
+        await nextImage.waitFor({ state: "visible" });
         await nextImage.click();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         
         // Check for max warning
-        await expect(page.getByText(/Maximum limit reached/i)).toBeVisible();
+        await expect(page.getByText(/Maximum limit reached/i)).toBeVisible({ timeout: 5000 });
         break;
       }
       
       // Add another image
       const images = selectionSection.locator('[class*="cursor-pointer"]');
       if ((await images.count()) > 0) {
+        await images.first().waitFor({ state: "visible" });
         await images.first().click();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(1000);
       } else {
         break;
       }
@@ -186,10 +193,10 @@ test.describe("Category Image Selection", () => {
         
         const removeButton = firstCard.locator('button[aria-label="Remove"]');
         await removeButton.click();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         
         // Check for min warning
-        await expect(page.getByText(/Minimum limit reached/i)).toBeVisible();
+        await expect(page.getByText(/Minimum limit reached/i)).toBeVisible({ timeout: 5000 });
         break;
       }
       
@@ -200,43 +207,28 @@ test.describe("Category Image Selection", () => {
         
         const removeButton = firstCard.locator('button[aria-label="Remove"]');
         await removeButton.click();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(1000);
       }
     }
   });
 
-  test("should persist selections in localStorage", async ({ page }) => {
-    const selectionSection = page.locator("section").last();
-    
-    // Click an image
-    const firstImage = selectionSection.locator('[class*="cursor-pointer"]').first();
-    await firstImage.click();
-    await page.waitForTimeout(300);
-    
-    // Get localStorage value
-    const stored = await page.evaluate(() => 
-      localStorage.getItem("selected_category_images")
-    );
-    
-    expect(stored).toBeTruthy();
-    
-    // Parse and verify it's an array
-    const parsed = JSON.parse(stored!);
-    expect(Array.isArray(parsed)).toBe(true);
-    expect(parsed.length).toBeGreaterThanOrEqual(6);
-  });
-
-  test("should restore selections from localStorage on page reload", async ({ page }) => {
+  test("should persist selections across page reloads", async ({ page }) => {
     const defaultSection = page.locator("section").first();
     
     // Get current count
     const initialCount = await defaultSection.locator('[class*="group relative"]').count();
     
+    // Wait for any saves to complete
+    await page.waitForTimeout(1000);
+    
     // Reload page
     await page.reload();
     await page.waitForLoadState("networkidle");
     
-    // Check count is the same
+    // Wait for data to load
+    await page.waitForTimeout(1000);
+    
+    // Check count is the same (preferences persisted in database)
     const newCount = await defaultSection.locator('[class*="group relative"]').count();
     expect(newCount).toBe(initialCount);
   });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCategoryPreferences } from "@/features/categories/actions/useCategoryPreferences";
+import { useCategoryPreferences } from "@/features/user";
 import { CategoryGrid, SelectionGrid } from "@/features/categories";
 import { getCategoriesWithImages } from "@/features/categories";
 import type { ExpenseCategory, CategoryImage } from "@/features/categories";
