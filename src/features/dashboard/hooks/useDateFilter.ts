@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { Expense } from "@/features/expenses/domain/expense.types";
+import { calculateDateTotal, calculateMonthTotal, getExpensesForDate } from "@/features/expenses";
 
 /**
  * Manages date selection and expense filtering
@@ -13,21 +14,26 @@ export function useDateFilter(expenses: Expense[]) {
   const router = useRouter();
 
   // Get current selected date from URL, default to today
-  const selectedDate = useMemo(
-    () => searchParams.get("date") || new Date().toISOString().split("T")[0],
-    [searchParams]
-  );
+  const selectedDate = useMemo(() => {
+    return (searchParams.get("date") ?? new Date().toISOString().split("T")[0]) as string;
+  }, [searchParams]);
 
-  // Filter expenses for the selected date
+  // Filter expenses for the selected date using domain function
   const filteredExpenses = useMemo(
-    () => expenses.filter((expense) => expense.date === selectedDate),
+    () => getExpensesForDate(expenses, selectedDate),
     [expenses, selectedDate]
   );
 
-  // Calculate total spending for the selected date
+  // Calculate total spending for the selected date using domain function
   const totalSpending = useMemo(
-    () => filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0),
-    [filteredExpenses]
+    () => calculateDateTotal(expenses, selectedDate),
+    [expenses, selectedDate]
+  );
+
+  // Calculate total spending for the selected month using domain function
+  const monthlySpending = useMemo(
+    () => calculateMonthTotal(expenses, selectedDate),
+    [expenses, selectedDate]
   );
 
   const handleDateSelect = (date: string) => {
@@ -38,6 +44,7 @@ export function useDateFilter(expenses: Expense[]) {
     selectedDate,
     filteredExpenses,
     totalSpending,
+    monthlySpending,
     onDateSelect: handleDateSelect,
   };
 }

@@ -7,9 +7,10 @@ type ExpenseListProps = {
   expenses: Expense[];
   title?: string;
   isLoading?: boolean;
+  totalSpending?: number;
 };
 
-export function ExpenseList({ expenses, title = "Wins in life", isLoading = false }: ExpenseListProps) {
+export function ExpenseList({ expenses, title = "Wins in life", isLoading = false, totalSpending }: ExpenseListProps) {
   if (isLoading) {
     return <ExpenseListLoading title={title} />;
   }
@@ -18,10 +19,22 @@ export function ExpenseList({ expenses, title = "Wins in life", isLoading = fals
     return <ExpenseListEmpty title={title} />;
   }
 
+  const formatCurrency = (amount: number) => {
+    return amount.toLocaleString('en-SG', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+
   return (
     <div className="w-full mb-8 flex-1 overflow-y-auto" data-testid="container-transactions">
-      <div className="border-b border-gray-100 pb-2 mb-4">
+      <div className="border-b border-gray-100 pb-2 mb-4 flex justify-between items-center">
         <h4 className="text-gray-500 font-medium text-sm">{title}</h4>
+        {totalSpending !== undefined && (
+          <span className="text-gray-700 font-semibold text-sm">
+            ${formatCurrency(totalSpending)}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col gap-6 pb-4">

@@ -14,18 +14,18 @@ export function calculateTotal(expenses: Expense[]): number {
 }
 
 /**
- * Calculate month-to-date total (current month only)
+ * Calculate total for a specific month (based on a date in that month)
  */
-export function calculateMonthToDate(expenses: Expense[]): number {
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
+export function calculateMonthTotal(expenses: Expense[], date: string): number {
+  const targetDate = new Date(date);
+  const targetMonth = targetDate.getMonth();
+  const targetYear = targetDate.getFullYear();
 
   const monthExpenses = expenses.filter((expense) => {
     const expenseDate = new Date(expense.date);
     return (
-      expenseDate.getMonth() === currentMonth &&
-      expenseDate.getFullYear() === currentYear
+      expenseDate.getMonth() === targetMonth &&
+      expenseDate.getFullYear() === targetYear
     );
   });
 

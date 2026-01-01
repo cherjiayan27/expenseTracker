@@ -8,11 +8,12 @@ import type { Expense } from "@/features/expenses/domain/expense.types";
 
 interface DashboardClientProps {
   expenses: Expense[];
+  monthlyBudget: number;
 }
 
-export function DashboardClient({ expenses }: DashboardClientProps) {
+export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProps) {
   // Date filtering and selection
-  const { filteredExpenses, totalSpending, onDateSelect } = useDateFilter(expenses);
+  const { filteredExpenses, totalSpending, monthlySpending, onDateSelect } = useDateFilter(expenses);
 
   // Bottom sheet state management
   const bottomSheet = useBottomSheetState();
@@ -20,8 +21,8 @@ export function DashboardClient({ expenses }: DashboardClientProps) {
   return (
     <>
       <DashboardLayout header={<CalendarStrip onDateSelect={onDateSelect} />}>
-        <BudgetProgress totalSpending={totalSpending} monthlyBudget={50.0} />
-        <ExpenseList expenses={filteredExpenses} isLoading={false} />
+        <BudgetProgress totalMonthlySpending={monthlySpending} monthlyBudget={monthlyBudget} />
+        <ExpenseList expenses={filteredExpenses} isLoading={false} totalSpending={totalSpending} />
       </DashboardLayout>
 
       {/* Bottom Sheet Overlay */}

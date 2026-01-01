@@ -3,18 +3,18 @@
 import { ChevronRight } from "lucide-react";
 
 interface BudgetProgressProps {
-  totalSpending?: number;
+  totalMonthlySpending?: number;
   monthlyBudget?: number;
   currency?: string;
 }
 
 export function BudgetProgress({
-  totalSpending = 20.00,
+  totalMonthlySpending = 20.00,
   monthlyBudget = 50.00,
 }: BudgetProgressProps) {
   // Calculate progress percentage (0-100)
   const progressPercentage = monthlyBudget > 0
-    ? Math.min((totalSpending / monthlyBudget) * 100, 100)
+    ? Math.min((totalMonthlySpending / monthlyBudget) * 100, 100)
     : 0;
 
   // Semi-circle arc length is approximately 377
@@ -65,10 +65,10 @@ export function BudgetProgress({
         <div className="text-center z-10 translate-y-8">
           <h3 className="text-base font-sans font-medium text-black mb-0">Total Spending</h3>
           <div className="text-6xl font-sans font-medium text-black leading-tight">
-            ${formatCurrency(totalSpending)}
+            ${formatCurrency(totalMonthlySpending)}
           </div>
           <p className="text-xs text-gray-500 font-sans flex items-center justify-center gap-0.5 mt-1">
-            of your ${formatCurrency(monthlyBudget)} budget <ChevronRight className="h-3 w-3" />
+            of your ${formatCurrency(monthlyBudget)} monthly budget <ChevronRight className="h-3 w-3" />
           </p>
         </div>
       </div>

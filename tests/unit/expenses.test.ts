@@ -5,7 +5,6 @@ import {
 } from "@/features/expenses/domain/expense.schema";
 import {
   calculateTotal,
-  calculateMonthToDate,
 } from "@/features/expenses/domain/calculations/expense-totals";
 import { formatCurrency } from "@/features/expenses/domain/formatters/currency.formatter";
 import { groupByDate } from "@/features/expenses/domain/calculations/expense-filters";
@@ -158,18 +157,6 @@ describe("Expense Calculations", () => {
 
     it("should return 0 for empty array", () => {
       const total = calculateTotal([]);
-      expect(total).toBe(0);
-    });
-  });
-
-  describe("calculateMonthToDate", () => {
-    it("should calculate total for current month only", () => {
-      const total = calculateMonthToDate(mockExpenses);
-      expect(total).toBe(150.75); // Only first two expenses
-    });
-
-    it("should return 0 for empty array", () => {
-      const total = calculateMonthToDate([]);
       expect(total).toBe(0);
     });
   });

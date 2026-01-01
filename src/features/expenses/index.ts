@@ -25,7 +25,7 @@ export { getExpenses } from "./actions/getExpenses";
 
 // Calculations (for Server Components)
 export {
-  calculateMonthToDate,
+  calculateMonthTotal,
   calculateDateTotal,
   calculateRangeTotal,
 } from "./domain/calculations/expense-totals";
