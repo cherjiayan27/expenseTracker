@@ -5,8 +5,9 @@ export interface Expense {
   id: string;
   userId: string;
   amount: number;
-  description: string;
+  description: string | null;
   category: string | null;
+  subCategory: string | null;
   date: string; // ISO date string (YYYY-MM-DD)
   createdAt: string; // ISO datetime string
   updatedAt: string; // ISO datetime string
@@ -14,8 +15,9 @@ export interface Expense {
 
 export type CreateExpenseInput = {
   amount: number;
-  description: string;
+  description?: string;
   category?: string | null;
+  subCategory?: string | null;
   date?: string; // Optional, defaults to today
 };
 

@@ -5,7 +5,7 @@ import { createServerClient } from "@/server/supabase/client.server";
 import { getUserExpenses as getUserExpensesRepo } from "../data/expense.repository";
 import type { Expense } from "../domain/expense.types";
 
-// Cache for request-level deduplication
+// Server Action with React cache for request-level deduplication
 export const getExpenses = cache(async (): Promise<Expense[]> => {
   // Get authenticated user
   const supabase = await createServerClient();
@@ -21,21 +21,10 @@ export const getExpenses = cache(async (): Promise<Expense[]> => {
   }
 
   // Fetch expenses from repository
-  // Note: Next.js fetch caching doesn't apply to Supabase queries
-  // We rely on React cache() for request-level deduplication
-  // and revalidateTag() for cache invalidation
+  // React cache() provides request-level deduplication
+  // revalidatePath() in mutations will refresh the page data
   const expenses = await getUserExpensesRepo(user.id);
 
   return expenses;
 });
-
-// For cache tagging, we export a helper to get the user's cache tag
-export async function getExpensesCacheTag(): Promise<string> {
-  const supabase = await createServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user ? `expenses:${user.id}` : "";
-}
 

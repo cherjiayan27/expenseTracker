@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { createServerClient } from "@/server/supabase/client.server";
 import { createExpenseSchema } from "../domain/expense.schema";
 import { createExpense as createExpenseRepo } from "../data/expense.repository";
@@ -31,6 +31,7 @@ export async function createExpense(
       amount: formData.get("amount"),
       description: formData.get("description"),
       category: formData.get("category"),
+      subCategory: formData.get("subCategory"),
       date: formData.get("date"),
     };
 
@@ -47,8 +48,9 @@ export async function createExpense(
     // Validate with Zod
     const validation = createExpenseSchema.safeParse({
       amount,
-      description: rawData.description,
-      category: rawData.category || null,
+      description: rawData.description || undefined,
+      category: rawData.category as string,
+      subCategory: rawData.subCategory || null,
       date: rawData.date || undefined,
     });
 
@@ -62,8 +64,9 @@ export async function createExpense(
     // Create expense in database
     const expense = await createExpenseRepo(user.id, validation.data);
 
-    // Revalidate cache
+    // Revalidate cache by tag and path
     revalidateTag(`expenses:${user.id}`);
+    revalidatePath('/dashboard');
 
     return {
       success: true,

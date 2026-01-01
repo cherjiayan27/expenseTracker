@@ -14,18 +14,41 @@ export type { ExpenseCategory, CategoryImage } from "./domain/expense.categories
 
 // Hooks
 export { useCreateExpense } from "./actions/useCreateExpense";
+export { useExpenseForm, useExpenseSubmission } from "./hooks";
 
 // UI Components
 export { ExpenseCard } from "./ui/ExpenseCard";
 export { ExpenseList } from "./ui/ExpenseList";
-export { CreateExpenseForm } from "./ui/CreateExpenseForm";
-export { MonthToDateCard } from "./ui/MonthToDateCard";
 
 // Server Actions (for Server Components)
 export { getExpenses } from "./actions/getExpenses";
 
 // Calculations (for Server Components)
-export { calculateMonthToDate, formatCurrency } from "./domain/expense.calculations";
+export {
+  calculateMonthToDate,
+  calculateDateTotal,
+  calculateRangeTotal,
+} from "./domain/calculations/expense-totals";
+
+export {
+  getExpensesForDate,
+  getExpensesInRange,
+} from "./domain/calculations/expense-filters";
+
+export { formatCurrency } from "./domain/formatters/currency.formatter";
+
+export {
+  getWeekRange,
+  getMonthRange,
+  getYearRange,
+} from "./domain/utils/date.utils";
+
+// Helpers
+export {
+  getCategoryImage,
+  getCategoryDisplayName,
+  formatTime,
+} from "./domain/expense.helpers";
 
 // Categories and Images (re-exported from categories feature)
 export {

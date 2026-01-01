@@ -1,5 +1,5 @@
 // Types for user preferences
-export type PreferenceKey = 'category_mascots';
+export type PreferenceKey = 'category_mascots' | 'monthly_budget';
 
 export interface UserPreference {
   id: string;

@@ -18,6 +18,7 @@ export function dbRowToExpense(row: DbExpenseRow): Expense {
     amount: Number(row.amount),
     description: row.description,
     category: row.category,
+    subCategory: row.sub_category,
     date: row.date,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -57,9 +58,16 @@ export async function createExpense(
   const insertData: DbExpenseInsert = {
     user_id: userId,
     amount: input.amount,
-    description: input.description,
+    description: input.description || null,
     category: input.category ?? null,
-    date: input.date || new Date().toISOString().split("T")[0]!,
+    sub_category: input.subCategory ?? null,
+    date: input.date || (() => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    })(),
   };
 
   const { data, error } = await supabase
@@ -91,6 +99,7 @@ export async function updateExpense(
   if (input.amount !== undefined) updateData.amount = input.amount;
   if (input.description !== undefined) updateData.description = input.description;
   if (input.category !== undefined) updateData.category = input.category;
+  if (input.subCategory !== undefined) updateData.sub_category = input.subCategory;
   if (input.date !== undefined) updateData.date = input.date;
 
   const { data, error } = await supabase

@@ -4,7 +4,7 @@ import { MobileHeader } from "@/components/navigation/MobileHeader";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Mobile Header - Only visible on mobile */}
       <MobileHeader />
       
@@ -30,6 +30,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               >
                 Categories
               </Link>
+              <Link
+                href="/budget"
+                className="text-sm font-medium text-gray-700 hover:text-gray-900"
+              >
+                Budget
+              </Link>
               <LogoutButton />
             </div>
           </div>
@@ -37,7 +43,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </nav>
       
       {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 py-4">{children}</main>
     </div>
   );
 }

@@ -4,12 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { getNavMascots } from "@/features/user/actions/getNavMascots";
+import { getTodayDate } from "@/app/(app)/dashboard/lib/date-utils";
 import type { CategoryImage } from "@/features/categories/domain/category.types";
 
 export function BottomNav() {
   const [mascots, setMascots] = useState<CategoryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  
+  // Get the currently selected date from URL or default to today
+  const selectedDate = searchParams.get("date") || getTodayDate();
 
   useEffect(() => {
     async function loadMascots() {
@@ -76,7 +82,7 @@ export function BottomNav() {
 
       {/* Detached Plus Action Button */}
       <Link
-        href="/dashboard/add-expense"
+        href={`/dashboard?add-expense=true&date=${selectedDate}`}
         aria-label="Add expense"
         className="flex items-center justify-center w-14 h-14 bg-gray-900 text-white rounded-[1.25rem] shadow-2xl transition-all hover:bg-gray-800 active:scale-95 flex-shrink-0"
       >

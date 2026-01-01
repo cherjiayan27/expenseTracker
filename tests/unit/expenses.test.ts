@@ -6,9 +6,9 @@ import {
 import {
   calculateTotal,
   calculateMonthToDate,
-  formatCurrency,
-  groupByDate,
-} from "@/features/expenses/domain/expense.calculations";
+} from "@/features/expenses/domain/calculations/expense-totals";
+import { formatCurrency } from "@/features/expenses/domain/formatters/currency.formatter";
+import { groupByDate } from "@/features/expenses/domain/calculations/expense-filters";
 import type { Expense } from "@/features/expenses/domain/expense.types";
 import {
   EXPENSE_CATEGORIES,

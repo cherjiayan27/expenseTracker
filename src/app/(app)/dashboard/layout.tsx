@@ -1,19 +1,20 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import { BottomNav } from "@/components/navigation/BottomNav";
 
 export default function DashboardLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
 }) {
+  const searchParams = useSearchParams();
+  const isBottomSheetOpen = searchParams.get("add-expense") === "true";
+
   return (
     <>
-      <div className="pb-24 md:pb-0">
-        {children}
-        {modal}
-      </div>
-      <BottomNav />
+      {children}
+      {!isBottomSheetOpen && <BottomNav />}
     </>
   );
 }

@@ -61,6 +61,13 @@ export function MobileHeader() {
               >
                 Categories
               </Link>
+              <Link
+                href="/budget"
+                className="text-2xl font-medium text-gray-900 hover:text-gray-600 transition-colors flex items-center gap-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Budget
+              </Link>
             </nav>
 
             {/* Bottom Section - Logout */}

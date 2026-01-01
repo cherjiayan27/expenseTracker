@@ -1,40 +1,44 @@
 import type { Expense } from "../domain/expense.types";
-import { formatCurrency, formatDate } from "../domain/expense.calculations";
-import { Card } from "@/components/ui/card";
+import { formatCurrency } from "../domain/formatters/currency.formatter";
+import { getCategoryImage, getCategoryDisplayName } from "../domain/expense.helpers";
+import Image from "next/image";
 
 type ExpenseCardProps = {
   expense: Expense;
 };
 
 export function ExpenseCard({ expense }: ExpenseCardProps) {
-  const { amount, description, category, date } = expense;
+  const { amount, description, category, subCategory } = expense;
+  const categoryImage = getCategoryImage(category, subCategory);
+  const categoryName = getCategoryDisplayName(category);
+
+  // Build the subtitle: "SubCategory • Description" or just one of them
+  const subtitleParts = [subCategory, description].filter(Boolean);
+  const subtitle = subtitleParts.join(' • ');
 
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">
-            {description}
-          </p>
-          <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-            <span>{formatDate(date)}</span>
-            {category && (
-              <>
-                <span>•</span>
-                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700">
-                  {category}
-                </span>
-              </>
-            )}
-          </div>
+    <div className="flex items-center justify-between" data-testid={`expense-${expense.id}`}>
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white shadow-sm border border-gray-100">
+          <Image
+            src={categoryImage}
+            alt={categoryName}
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain"
+          />
         </div>
-        <div className="text-right">
-          <p className="text-base font-semibold text-gray-900">
-            {formatCurrency(amount)}
-          </p>
+        <div className="flex flex-col gap-0.5">
+          <h5 className="font-bold text-black text-sm">{categoryName}</h5>
+          {subtitle && (
+            <p className="text-gray-500 text-xs">{subtitle}</p>
+          )}
         </div>
       </div>
-    </Card>
+      <div className="font-bold text-black text-sm">
+        {formatCurrency(amount)}
+      </div>
+    </div>
   );
 }
 

@@ -38,9 +38,10 @@ export type Database = {
         Row: {
           amount: number
           category: string | null
+          sub_category: string | null
           created_at: string
           date: string
-          description: string
+          description: string | null
           id: string
           updated_at: string
           user_id: string
@@ -48,9 +49,10 @@ export type Database = {
         Insert: {
           amount: number
           category?: string | null
+          sub_category?: string | null
           created_at?: string
           date?: string
-          description: string
+          description?: string | null
           id?: string
           updated_at?: string
           user_id: string
@@ -58,6 +60,7 @@ export type Database = {
         Update: {
           amount?: number
           category?: string | null
+          sub_category?: string | null
           created_at?: string
           date?: string
           description?: string
