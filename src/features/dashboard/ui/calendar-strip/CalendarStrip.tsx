@@ -51,7 +51,7 @@ export function CalendarStrip({
       className={cn("w-full overflow-x-auto", HIDE_SCROLLBAR_CLASSNAME)}
       style={HIDE_SCROLLBAR_STYLE}
     >
-      <div className="flex justify-between items-center w-full">
+      <div className="flex items-center gap-2">
         {visibleDates.map((item) => (
           <DateButton
             key={item.fullDate}

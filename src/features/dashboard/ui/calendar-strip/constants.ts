@@ -16,7 +16,7 @@ export const HIDE_SCROLLBAR_CLASSNAME = "[&::-webkit-scrollbar]:hidden";
 /**
  * Default number of days to show in calendar strip
  */
-export const DEFAULT_VISIBLE_DAYS = 7;
+export const DEFAULT_VISIBLE_DAYS = 30;
 
 /**
  * Default number of days to generate in date range

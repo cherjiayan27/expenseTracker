@@ -12,7 +12,7 @@ export function DateButton({ day, date, fullDate, isSelected, onClick }: DateBut
   return (
     <button
       onClick={() => onClick(fullDate)}
-      className="flex flex-col items-center justify-center gap-1 transition-all"
+      className="flex flex-col items-center justify-center gap-1 transition-all min-w-[50px] px-1"
       aria-label={`Select ${day} ${date}`}
       aria-pressed={isSelected}
     >
