@@ -39,3 +39,19 @@ export function getExpensesInRange(
     return expense.date >= startDate && expense.date <= endDate;
   });
 }
+
+/**
+ * Filter out debt expenses (owedTo is null)
+ * Returns only regular expenses
+ */
+export function filterNonDebts(expenses: Expense[]): Expense[] {
+  return expenses.filter((expense) => expense.owedTo === null);
+}
+
+/**
+ * Get only debt expenses (owedTo is not null)
+ * Returns expenses where money is owed to someone
+ */
+export function filterDebts(expenses: Expense[]): Expense[] {
+  return expenses.filter((expense) => expense.owedTo !== null);
+}

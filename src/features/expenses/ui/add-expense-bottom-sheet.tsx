@@ -28,12 +28,14 @@ export function AddExpenseBottomSheet({
     category,
     subCategory,
     note,
+    isOwe,
     error,
     availableSubCategories,
     setAmount,
     setCategory,
     setSubCategory,
     setNote,
+    setIsOwe,
     setError,
     resetForm,
     validateAmount,
@@ -45,6 +47,7 @@ export function AddExpenseBottomSheet({
     category,
     subCategory,
     note,
+    isOwe,
     selectedDate,
     validateAmount,
     setError,
@@ -92,7 +95,7 @@ export function AddExpenseBottomSheet({
           onSubCategoryChange={setSubCategory}
         />
 
-        <NoteInput value={note} onChange={setNote} />
+        <NoteInput value={note} onChange={setNote} isOwe={isOwe} onOweChange={setIsOwe} />
       </div>
 
       {/* Form Actions - Fixed at bottom */}

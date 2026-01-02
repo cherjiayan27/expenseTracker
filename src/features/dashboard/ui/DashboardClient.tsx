@@ -2,8 +2,9 @@
 
 import { CalendarStrip, BudgetProgress, DashboardLayout } from "@/features/dashboard/ui";
 import { useBottomSheetState, useDateFilter } from "@/features/dashboard/hooks";
-import { ExpenseList } from "@/features/expenses";
+import { ExpenseList, DebtList } from "@/features/expenses";
 import { AddExpenseBottomSheet } from "@/features/expenses/ui/add-expense-bottom-sheet";
+import { filterDebts, filterNonDebts } from "@/features/expenses/domain/calculations/expense-filters";
 import type { Expense } from "@/features/expenses/domain/expense.types";
 
 interface DashboardClientProps {
@@ -12,8 +13,12 @@ interface DashboardClientProps {
 }
 
 export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProps) {
-  // Date filtering and selection
-  const { filteredExpenses, totalSpending, monthlySpending, onDateSelect } = useDateFilter(expenses);
+  // Split expenses into debts and regular expenses
+  const allDebts = filterDebts(expenses);
+  const nonDebtExpenses = filterNonDebts(expenses);
+
+  // Date filtering and selection (only for non-debt expenses)
+  const { filteredExpenses, totalSpending, monthlySpending, onDateSelect } = useDateFilter(nonDebtExpenses);
 
   // Bottom sheet state management
   const bottomSheet = useBottomSheetState();
@@ -22,7 +27,12 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
     <>
       <DashboardLayout header={<CalendarStrip onDateSelect={onDateSelect} />}>
         <BudgetProgress totalMonthlySpending={monthlySpending} monthlyBudget={monthlyBudget} />
-        <ExpenseList expenses={filteredExpenses} isLoading={false} totalSpending={totalSpending} />
+        <div className="mt-16">
+          <DebtList debts={allDebts} />
+        </div>
+        <div className="mt-6">
+          <ExpenseList expenses={filteredExpenses} isLoading={false} totalSpending={totalSpending} />
+        </div>
       </DashboardLayout>
 
       {/* Bottom Sheet Overlay */}

@@ -9,6 +9,7 @@ interface UseExpenseSubmissionParams {
   category: ExpenseCategory;
   subCategory: string | null;
   note: string;
+  isOwe: boolean;
   selectedDate?: string | null;
   validateAmount: () => boolean;
   setError: (error: string | null) => void;
@@ -31,6 +32,7 @@ export function useExpenseSubmission({
   category,
   subCategory,
   note,
+  isOwe,
   selectedDate,
   validateAmount,
   setError,
@@ -57,7 +59,11 @@ export function useExpenseSubmission({
           formData.append("subCategory", subCategory);
         }
 
-        if (note.trim()) {
+        // If "Owe" is checked, store the name in owedTo field
+        // Otherwise, use the note as description
+        if (isOwe && note.trim()) {
+          formData.append("owedTo", note.trim());
+        } else if (note.trim()) {
           formData.append("description", note.trim());
         }
 

@@ -36,6 +36,12 @@ export const createExpenseSchema = z.object({
     .max(50, "Sub-category must be 50 characters or less")
     .optional()
     .nullable(),
+  owedTo: z
+    .string()
+    .max(100, "Name must be 100 characters or less")
+    .trim()
+    .optional()
+    .nullable(),
   date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
@@ -52,6 +58,7 @@ export const createExpenseFormSchema = z.object({
   description: z.string().optional(),
   category: z.string().min(1, "Category is required"),
   subCategory: z.string().optional(),
+  owedTo: z.string().optional(),
   date: z.string().optional(),
 });
 

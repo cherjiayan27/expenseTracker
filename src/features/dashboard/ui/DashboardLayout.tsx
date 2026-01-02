@@ -18,7 +18,7 @@ export function DashboardLayout({ header, children }: DashboardLayoutProps) {
 
       {/* Scrollable Content */}
       <div className="p-4 pt-[80px]">
-        <div className="max-w-2xl mx-auto space-y-16">{children}</div>
+        <div className="max-w-2xl mx-auto">{children}</div>
       </div>
     </div>
   );

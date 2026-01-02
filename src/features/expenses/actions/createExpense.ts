@@ -32,6 +32,7 @@ export async function createExpense(
       description: formData.get("description"),
       category: formData.get("category"),
       subCategory: formData.get("subCategory"),
+      owedTo: formData.get("owedTo"),
       date: formData.get("date"),
     };
 
@@ -51,6 +52,7 @@ export async function createExpense(
       description: rawData.description || undefined,
       category: rawData.category as string,
       subCategory: rawData.subCategory || null,
+      owedTo: rawData.owedTo || null,
       date: rawData.date || undefined,
     });
 

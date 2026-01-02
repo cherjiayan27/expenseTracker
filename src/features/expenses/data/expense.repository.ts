@@ -19,6 +19,7 @@ export function dbRowToExpense(row: DbExpenseRow): Expense {
     description: row.description,
     category: row.category,
     subCategory: row.sub_category,
+    owedTo: row.owed_to,
     date: row.date,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -61,6 +62,7 @@ export async function createExpense(
     description: input.description || null,
     category: input.category ?? null,
     sub_category: input.subCategory ?? null,
+    owed_to: input.owedTo ?? null,
     date: input.date || (() => {
       const today = new Date();
       const year = today.getFullYear();
@@ -100,6 +102,7 @@ export async function updateExpense(
   if (input.description !== undefined) updateData.description = input.description;
   if (input.category !== undefined) updateData.category = input.category;
   if (input.subCategory !== undefined) updateData.sub_category = input.subCategory;
+  if (input.owedTo !== undefined) updateData.owed_to = input.owedTo;
   if (input.date !== undefined) updateData.date = input.date;
 
   const { data, error } = await supabase

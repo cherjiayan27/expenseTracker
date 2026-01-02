@@ -19,6 +19,8 @@ export { useExpenseForm, useExpenseSubmission } from "./hooks";
 // UI Components
 export { ExpenseCard } from "./ui/ExpenseCard";
 export { ExpenseList } from "./ui/ExpenseList";
+export { DebtCard } from "./ui/DebtCard";
+export { DebtList } from "./ui/DebtList";
 
 // Server Actions (for Server Components)
 export { getExpenses } from "./actions/getExpenses";
@@ -33,6 +35,8 @@ export {
 export {
   getExpensesForDate,
   getExpensesInRange,
+  filterDebts,
+  filterNonDebts,
 } from "./domain/calculations/expense-filters";
 
 export { formatCurrency } from "./domain/formatters/currency.formatter";

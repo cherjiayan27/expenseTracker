@@ -16,6 +16,7 @@ interface UseExpenseFormReturn {
   category: ExpenseCategory;
   subCategory: string | null;
   note: string;
+  isOwe: boolean;
   error: string | null;
 
   // Available options
@@ -26,6 +27,7 @@ interface UseExpenseFormReturn {
   setCategory: Dispatch<SetStateAction<ExpenseCategory>>;
   setSubCategory: Dispatch<SetStateAction<string | null>>;
   setNote: Dispatch<SetStateAction<string>>;
+  setIsOwe: Dispatch<SetStateAction<boolean>>;
   setError: Dispatch<SetStateAction<string | null>>;
 
   // Form actions
@@ -42,6 +44,7 @@ export function useExpenseForm(): UseExpenseFormReturn {
   const [category, setCategory] = useState<ExpenseCategory>(DEFAULT_CATEGORY);
   const [subCategory, setSubCategory] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [isOwe, setIsOwe] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Get available sub-categories based on selected category
@@ -59,6 +62,7 @@ export function useExpenseForm(): UseExpenseFormReturn {
     setCategory(DEFAULT_CATEGORY);
     setSubCategory(null);
     setNote("");
+    setIsOwe(false);
     setError(null);
   };
 
@@ -68,6 +72,13 @@ export function useExpenseForm(): UseExpenseFormReturn {
       setError("Please enter a valid amount");
       return false;
     }
+    
+    // If "Owe" is checked, the note field (who you owe) is required
+    if (isOwe && !note.trim()) {
+      setError("Please enter who you owe money to");
+      return false;
+    }
+    
     setError(null);
     return true;
   };
@@ -78,6 +89,7 @@ export function useExpenseForm(): UseExpenseFormReturn {
     category,
     subCategory,
     note,
+    isOwe,
     error,
 
     // Available options
@@ -88,6 +100,7 @@ export function useExpenseForm(): UseExpenseFormReturn {
     setCategory,
     setSubCategory,
     setNote,
+    setIsOwe,
     setError,
 
     // Form actions

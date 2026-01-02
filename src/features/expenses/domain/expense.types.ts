@@ -8,6 +8,7 @@ export interface Expense {
   description: string | null;
   category: string | null;
   subCategory: string | null;
+  owedTo: string | null; // Name of person owed money to (null if not an owed expense)
   date: string; // ISO date string (YYYY-MM-DD)
   createdAt: string; // ISO datetime string
   updatedAt: string; // ISO datetime string
@@ -18,6 +19,7 @@ export type CreateExpenseInput = {
   description?: string;
   category?: string | null;
   subCategory?: string | null;
+  owedTo?: string | null; // Name of person owed money to
   date?: string; // Optional, defaults to today
 };
 
