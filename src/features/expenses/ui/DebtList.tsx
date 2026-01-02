@@ -16,12 +16,13 @@ const formatCurrency = (amount: number) => {
 };
 
 export function DebtList({ debts }: DebtListProps) {
+  // Calculate total before early return to satisfy Rules of Hooks
+  const totalDebts = useMemo(() => calculateTotal(debts), [debts]);
+
   // Don't render anything if no debts
   if (debts.length === 0) {
     return null;
   }
-
-  const totalDebts = useMemo(() => calculateTotal(debts), [debts]);
 
   return (
     <div className="w-full mb-8" data-testid="container-debts">

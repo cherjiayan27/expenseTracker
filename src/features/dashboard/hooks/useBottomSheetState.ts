@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition, startTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 /**
@@ -12,7 +12,7 @@ export function useBottomSheetState() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   // Sync bottom sheet state with URL query parameters
   useEffect(() => {
