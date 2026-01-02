@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { Expense } from "../domain/expense.types";
 import { DebtCard } from "./DebtCard";
 import { calculateTotal } from "../domain/calculations/expense-totals";
@@ -6,20 +7,21 @@ type DebtListProps = {
   debts: Expense[];
 };
 
+// Move formatCurrency outside component to avoid recreation on every render
+const formatCurrency = (amount: number) => {
+  return amount.toLocaleString('en-SG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
+
 export function DebtList({ debts }: DebtListProps) {
   // Don't render anything if no debts
   if (debts.length === 0) {
     return null;
   }
 
-  const totalDebts = calculateTotal(debts);
-
-  const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('en-SG', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-  };
+  const totalDebts = useMemo(() => calculateTotal(debts), [debts]);
 
   return (
     <div className="w-full mb-8" data-testid="container-debts">

@@ -10,6 +10,14 @@ type ExpenseListProps = {
   totalSpending?: number;
 };
 
+// Move formatCurrency outside component to avoid recreation on every render
+const formatCurrency = (amount: number) => {
+  return amount.toLocaleString('en-SG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
+
 export function ExpenseList({ expenses, title = "Wins in life", isLoading = false, totalSpending }: ExpenseListProps) {
   if (isLoading) {
     return <ExpenseListLoading title={title} />;
@@ -18,13 +26,6 @@ export function ExpenseList({ expenses, title = "Wins in life", isLoading = fals
   if (expenses.length === 0) {
     return <ExpenseListEmpty title={title} />;
   }
-
-  const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('en-SG', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-  };
 
   return (
     <div className="w-full mb-8 flex-1 overflow-y-auto" data-testid="container-transactions">

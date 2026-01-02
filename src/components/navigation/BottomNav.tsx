@@ -92,6 +92,8 @@ export function BottomNav() {
             aria-label="Add expense"
             className="h-20 w-20 bg-[#F3F4F6] rounded-full flex items-center justify-center transition-colors hover:bg-gray-200 flex-shrink-0"
             data-testid="nav-search"
+            prefetch={false}
+            scroll={false}
           >
             <Plus className="h-8 w-8 text-black stroke-[2.5]" />
           </Link>

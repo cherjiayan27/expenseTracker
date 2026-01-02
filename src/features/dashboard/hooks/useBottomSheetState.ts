@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition, startTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 /**
@@ -12,6 +12,7 @@ export function useBottomSheetState() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   // Sync bottom sheet state with URL query parameters
   useEffect(() => {
@@ -28,12 +29,26 @@ export function useBottomSheetState() {
   }, [searchParams]);
 
   const handleOpen = (date?: string) => {
+    // Update local state immediately for instant UI response
+    setIsOpen(true);
+    setSelectedDate(date ?? null);
+
+    // Update URL in the background
     const dateQuery = date ? `&date=${date}` : "";
-    router.push(`/dashboard?add-expense=true${dateQuery}`);
+    startTransition(() => {
+      router.push(`/dashboard?add-expense=true${dateQuery}`, { scroll: false });
+    });
   };
 
   const handleClose = () => {
-    router.push("/dashboard");
+    // Update local state immediately for instant UI response
+    setIsOpen(false);
+    setSelectedDate(null);
+
+    // Update URL in the background
+    startTransition(() => {
+      router.push("/dashboard", { scroll: false });
+    });
   };
 
   const handleSuccess = () => {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { CalendarStrip, BudgetProgress, DashboardLayout } from "@/features/dashboard/ui";
 import { useBottomSheetState, useDateFilter } from "@/features/dashboard/hooks";
 import { ExpenseList, DebtList } from "@/features/expenses";
@@ -13,9 +14,9 @@ interface DashboardClientProps {
 }
 
 export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProps) {
-  // Split expenses into debts and regular expenses
-  const allDebts = filterDebts(expenses);
-  const nonDebtExpenses = filterNonDebts(expenses);
+  // Split expenses into debts and regular expenses (memoized to avoid recalculating on every render)
+  const allDebts = useMemo(() => filterDebts(expenses), [expenses]);
+  const nonDebtExpenses = useMemo(() => filterNonDebts(expenses), [expenses]);
 
   // Date filtering and selection (only for non-debt expenses)
   const { filteredExpenses, totalSpending, monthlySpending, onDateSelect } = useDateFilter(nonDebtExpenses);
