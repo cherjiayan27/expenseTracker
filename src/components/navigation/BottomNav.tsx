@@ -44,50 +44,59 @@ export function BottomNav() {
   }, []);
 
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 md:hidden flex items-center gap-4 w-[90vw] max-w-max">
-      {/* Main Navigation Pill */}
-      <nav className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-[2rem] shadow-2xl px-2 py-2 overflow-x-auto no-scrollbar flex-1">
-        <div className="flex items-center gap-1 min-w-max">
-          {isLoading ? (
-            // Loading skeleton
-            Array.from({ length: 10 }).map((_, i) => (
-              <div
-                key={`skeleton-${i}`}
-                className="w-12 h-12 rounded-2xl bg-gray-100 animate-pulse flex-shrink-0"
-              />
-            ))
-          ) : (
-            mascots.map((image, index) => (
-              <Link
-                key={`${image.path}-${index}`}
-                href="#"
-                aria-label={image.name}
-                className="flex items-center justify-center w-12 h-12 rounded-2xl transition-all hover:bg-gray-50 active:scale-90 flex-shrink-0 p-1"
-              >
-                <div className="relative w-full h-full">
-                  <Image
-                    src={image.path}
-                    alt={image.name}
-                    fill
-                    className="object-contain"
-                    sizes="48px"
-                    unoptimized
-                  />
-                </div>
-              </Link>
-            ))
-          )}
-        </div>
-      </nav>
+    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      {/* Bottom Actions Container */}
+      <div className="w-full pb-8 shrink-0 px-4">
+        {/* Navigation Bar */}
+        <div className="flex items-center gap-2">
+          {/* Main Nav Pill - Scrollable */}
+          <div className="flex-1 bg-[#F3F4F6] h-20 rounded-[2.5rem] px-6 overflow-x-auto no-scrollbar">
+            <div className="flex items-center justify-start gap-4 h-full min-w-max">
+              {isLoading ? (
+                // Loading skeleton - 4 items
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={`skeleton-${i}`}
+                    className="flex items-center justify-center w-14 h-14 flex-shrink-0"
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-gray-200 animate-pulse" />
+                  </div>
+                ))
+              ) : (
+                mascots.map((image, index) => (
+                  <Link
+                    key={`${image.path}-${index}`}
+                    href="#"
+                    className="flex items-center justify-center w-14 h-14 flex-shrink-0"
+                    data-testid={`nav-${image.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    <div className="relative w-12 h-12">
+                      <Image
+                        src={image.path}
+                        alt={image.name}
+                        fill
+                        className="object-contain"
+                        sizes="48px"
+                        unoptimized
+                      />
+                    </div>
+                  </Link>
+                ))
+              )}
+            </div>
+          </div>
 
-      {/* Detached Plus Action Button */}
-      <Link
-        href={`/dashboard?add-expense=true&date=${selectedDate}`}
-        aria-label="Add expense"
-        className="flex items-center justify-center w-14 h-14 bg-gray-900 text-white rounded-[1.25rem] shadow-2xl transition-all hover:bg-gray-800 active:scale-95 flex-shrink-0"
-      >
-        <Plus className="h-8 w-8" />
-      </Link>
+          {/* Plus Button (triggers Bottom Sheet) */}
+          <Link
+            href={`/dashboard?add-expense=true&date=${selectedDate}`}
+            aria-label="Add expense"
+            className="h-20 w-20 bg-[#F3F4F6] rounded-full flex items-center justify-center transition-colors hover:bg-gray-200 flex-shrink-0"
+            data-testid="nav-search"
+          >
+            <Plus className="h-8 w-8 text-black stroke-[2.5]" />
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
