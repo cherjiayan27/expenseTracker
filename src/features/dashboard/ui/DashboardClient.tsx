@@ -7,6 +7,7 @@ import { ExpenseList, DebtList } from "@/features/expenses";
 import { AddExpenseBottomSheet } from "@/features/expenses/ui/add-expense-bottom-sheet";
 import { filterDebts, filterNonDebts } from "@/features/expenses/domain/calculations/expense-filters";
 import type { Expense } from "@/features/expenses/domain/expense.types";
+import { BottomNav } from "@/components/navigation/BottomNav";
 
 interface DashboardClientProps {
   expenses: Expense[];
@@ -19,10 +20,17 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
   const nonDebtExpenses = useMemo(() => filterNonDebts(expenses), [expenses]);
 
   // Date filtering and selection (only for non-debt expenses)
-  const { filteredExpenses, totalSpending, monthlySpending, onDateSelect } = useDateFilter(nonDebtExpenses);
+  const {
+    filteredExpenses,
+    totalSpending,
+    monthlySpending,
+    selectedDate,
+    onDateSelect,
+  } = useDateFilter(nonDebtExpenses);
 
   // Bottom sheet state management
   const bottomSheet = useBottomSheetState();
+  const handleOpenAddExpense = () => bottomSheet.open(selectedDate);
 
   return (
     <>
@@ -35,6 +43,10 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
           <ExpenseList expenses={filteredExpenses} isLoading={false} totalSpending={totalSpending} />
         </div>
       </DashboardLayout>
+
+      {!bottomSheet.isOpen && (
+        <BottomNav onAddExpense={handleOpenAddExpense} selectedDate={selectedDate} />
+      )}
 
       {/* Bottom Sheet Overlay */}
       {bottomSheet.isOpen && (

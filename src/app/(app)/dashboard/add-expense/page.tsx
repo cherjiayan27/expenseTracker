@@ -1,18 +1,15 @@
 "use client";
 
 import { Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function AddExpenseContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Redirect to dashboard with add-expense query parameter
-    const date = searchParams.get("date") || "";
-    const queryString = date ? `?add-expense=true&date=${date}` : "?add-expense=true";
-    router.replace(`/dashboard${queryString}`);
-  }, [router, searchParams]);
+    // Redirect to dashboard main page (bottom sheet now opens via client state)
+    router.replace("/dashboard");
+  }, [router]);
 
   return null;
 }

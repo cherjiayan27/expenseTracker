@@ -9,13 +9,18 @@ import { getNavMascots } from "@/features/user/actions/getNavMascots";
 import { getTodayDate } from "@/app/(app)/dashboard/lib/date-utils";
 import type { CategoryImage } from "@/features/categories/domain/category.types";
 
-export function BottomNav() {
+interface BottomNavProps {
+  onAddExpense?: () => void;
+  selectedDate?: string;
+}
+
+export function BottomNav({ onAddExpense, selectedDate }: BottomNavProps) {
   const [mascots, setMascots] = useState<CategoryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   
   // Get the currently selected date from URL or default to today
-  const selectedDate = searchParams.get("date") || getTodayDate();
+  const selectedDateParam = selectedDate || searchParams.get("date") || getTodayDate();
 
   useEffect(() => {
     async function loadMascots() {
@@ -87,16 +92,28 @@ export function BottomNav() {
           </div>
 
           {/* Plus Button (triggers Bottom Sheet) */}
-          <Link
-            href={`/dashboard?add-expense=true&date=${selectedDate}`}
-            aria-label="Add expense"
-            className="h-20 w-20 bg-[#F3F4F6] rounded-full flex items-center justify-center transition-colors hover:bg-gray-200 flex-shrink-0"
-            data-testid="nav-search"
-            prefetch={false}
-            scroll={false}
-          >
-            <Plus className="h-8 w-8 text-black stroke-[2.5]" />
-          </Link>
+          {onAddExpense ? (
+            <button
+              type="button"
+              aria-label="Add expense"
+              className="h-20 w-20 bg-[#F3F4F6] rounded-full flex items-center justify-center transition-colors hover:bg-gray-200 flex-shrink-0"
+              data-testid="nav-search"
+              onClick={onAddExpense}
+            >
+              <Plus className="h-8 w-8 text-black stroke-[2.5]" />
+            </button>
+          ) : (
+            <Link
+              href={`/dashboard?add-expense=true&date=${selectedDateParam}`}
+              aria-label="Add expense"
+              className="h-20 w-20 bg-[#F3F4F6] rounded-full flex items-center justify-center transition-colors hover:bg-gray-200 flex-shrink-0"
+              data-testid="nav-search"
+              prefetch={false}
+              scroll={false}
+            >
+              <Plus className="h-8 w-8 text-black stroke-[2.5]" />
+            </Link>
+          )}
         </div>
       </div>
     </div>

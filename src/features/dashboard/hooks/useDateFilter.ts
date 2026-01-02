@@ -1,22 +1,26 @@
 "use client";
 
-import { useMemo } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import type { Expense } from "@/features/expenses/domain/expense.types";
 import { calculateDateTotal, calculateMonthTotal, getExpensesForDate } from "@/features/expenses";
+import { getTodayDate } from "@/app/(app)/dashboard/lib/date-utils";
 
 /**
- * Manages date selection and expense filtering
- * Provides current selected date from URL and filters expenses accordingly
+ * Manages date selection and expense filtering without URL-driven navigation
  */
 export function useDateFilter(expenses: Expense[]) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayDate());
 
-  // Get current selected date from URL, default to today
-  const selectedDate = useMemo(() => {
-    return (searchParams.get("date") ?? new Date().toISOString().split("T")[0]) as string;
-  }, [searchParams]);
+  // On load/refresh, force today's date into state and URL (non-navigating)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const today = getTodayDate();
+      const url = new URL(window.location.href);
+      url.searchParams.set("date", today);
+      window.history.replaceState(null, "", url.toString());
+      setSelectedDate(today);
+    }
+  }, []);
 
   // Filter expenses for the selected date using domain function
   const filteredExpenses = useMemo(
@@ -37,7 +41,14 @@ export function useDateFilter(expenses: Expense[]) {
   );
 
   const handleDateSelect = (date: string) => {
-    router.push(`/dashboard?date=${date}`);
+    setSelectedDate(date);
+
+    // Keep the URL in sync for sharing/bookmarking without triggering navigation
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("date", date);
+      window.history.replaceState(null, "", url.toString());
+    }
   };
 
   return {
