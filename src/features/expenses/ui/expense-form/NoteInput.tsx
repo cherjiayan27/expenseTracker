@@ -18,7 +18,7 @@ export function NoteInput({ value, onChange }: NoteInputProps) {
           placeholder="Jot something down"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full h-12 pl-16 pr-6 rounded-xl bg-gray-100 border-none text-sm font-medium placeholder:text-gray-400 text-black hover:bg-gray-200/50 transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="w-full h-12 pl-16 pr-6 rounded-xl bg-gray-100 border-none text-base font-medium placeholder:text-gray-400 text-black hover:bg-gray-200/50 transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
     </div>
