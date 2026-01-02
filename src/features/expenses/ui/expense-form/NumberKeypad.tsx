@@ -39,13 +39,18 @@ export function NumberKeypad({ value, onChange }: NumberKeypadProps) {
   };
 
   return (
-    <div className="w-full mb-6">
-      <div className="grid grid-cols-3 gap-y-5 w-full px-8">
+    <div className="h-full w-full">
+      <div 
+        className="grid grid-cols-3 gap-3 w-full h-full px-6"
+        style={{ 
+          gridTemplateRows: 'repeat(4, 1fr)'
+        }}
+      >
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <button
             key={num}
             onClick={() => handleNumberClick(num.toString())}
-            className="flex items-center justify-center h-12 w-full active:scale-95 transition-transform"
+            className="flex items-center justify-center w-full h-full active:scale-95 transition-transform touch-manipulation"
           >
             <span className="text-3xl font-semibold text-black">{num}</span>
           </button>
@@ -53,23 +58,23 @@ export function NumberKeypad({ value, onChange }: NumberKeypadProps) {
 
         <button
           onClick={() => handleNumberClick(".")}
-          className="flex items-center justify-center h-12 w-full active:scale-95 transition-transform"
+          className="flex items-center justify-center w-full h-full active:scale-95 transition-transform touch-manipulation"
         >
-          <span className="text-3xl font-semibold text-black pb-4">.</span>
+          <span className="text-3xl font-semibold text-black pb-3">.</span>
         </button>
 
         <button
           onClick={() => handleNumberClick("0")}
-          className="flex items-center justify-center h-12 w-full active:scale-95 transition-transform"
+          className="flex items-center justify-center w-full h-full active:scale-95 transition-transform touch-manipulation"
         >
           <span className="text-3xl font-semibold text-black">0</span>
         </button>
 
         <button
           onClick={handleDelete}
-          className="flex items-center justify-center h-12 w-full active:scale-95 transition-transform"
+          className="flex items-center justify-center w-full h-full active:scale-95 transition-transform touch-manipulation"
         >
-          <Delete className="h-8 w-8 text-black stroke-[2]" />
+          <Delete className="h-7 w-7 text-black stroke-[2]" />
         </button>
       </div>
     </div>
