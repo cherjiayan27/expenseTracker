@@ -18,7 +18,7 @@ export function NoteInputRow({ value, onChange, isOwe = false, onOweChange }: No
       {/* Owe Checkbox */}
       <div className="flex items-center justify-between px-2">
         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-          Owe money?
+          Owe?
         </label>
         <div className="flex items-center justify-center bg-gray-100 rounded-xl h-12 w-12">
           <Checkbox
@@ -41,7 +41,7 @@ export function NoteInputRow({ value, onChange, isOwe = false, onOweChange }: No
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={isOwe ? "Name" : ""}
-            className="w-full h-12 px-4 rounded-xl bg-gray-100 border-none text-right font-bold text-gray-900 focus-visible:ring-0"
+            className="w-full h-12 px-4 rounded-xl bg-gray-100 border-none text-right text-gray-900 focus-visible:ring-0"
           />
         </div>
       </div>

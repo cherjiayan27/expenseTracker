@@ -101,11 +101,13 @@ export function EditExpenseModal({
 
               {/* Metadata section */}
               <div className="space-y-0.5 text-right mt-1">
+                <p className="text-gray-900 font-bold text-base tracking-tight">
+                  Edit expense
+                </p>
                 <p className="text-gray-400 font-bold text-sm tracking-tight">
                   #{expense.id.slice(0, 8).toUpperCase()}
                 </p>
                 <p className="text-gray-400 font-medium text-xs uppercase">{displayDate}</p>
-                <p className="text-gray-400 font-medium text-xs uppercase">{displayTime}</p>
               </div>
             </div>
 
@@ -119,13 +121,13 @@ export function EditExpenseModal({
               <div className="flex items-center justify-between px-2">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Amount</label>
                 <div className="flex items-center bg-gray-100 rounded-xl px-4 h-12 w-48">
-                  <span className="text-lg font-bold text-gray-900 mr-2">$</span>
+                  <span className="text-lg text-gray-900 mr-2">$</span>
                   <input
                     type="number"
                     step="0.01"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="bg-transparent border-none text-right w-full text-lg font-bold text-gray-900 focus:outline-none focus:ring-0"
+                    className="bg-transparent border-none text-right w-full text-lg text-gray-900 focus:outline-none focus:ring-0"
                     placeholder="0.00"
                   />
                 </div>

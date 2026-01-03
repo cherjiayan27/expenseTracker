@@ -47,7 +47,7 @@ export function CategorySelectorsRow({
         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Category</label>
         <div className="w-48">
           <Select value={category} onValueChange={(value) => onCategoryChange(value as ExpenseCategory)}>
-            <SelectTrigger className="w-full h-12 rounded-xl bg-gray-100 border-none px-4 font-bold text-gray-900 focus:ring-0">
+            <SelectTrigger className="w-full h-12 rounded-xl bg-gray-100 border-none px-4 text-gray-900 focus:ring-0">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="z-[90]">
@@ -70,11 +70,11 @@ export function CategorySelectorsRow({
               value={textFieldValue}
               onChange={(e) => onSubCategoryChange(e.target.value || null)}
               placeholder=""
-              className="w-full h-12 px-4 rounded-xl bg-gray-100 border-none text-right font-bold text-gray-900 focus-visible:ring-0"
+              className="w-full h-12 px-4 rounded-xl bg-gray-100 border-none text-right text-gray-900 focus-visible:ring-0"
             />
           ) : (
             <Select value={subCategory || ""} onValueChange={(value) => onSubCategoryChange(value || null)}>
-              <SelectTrigger className="w-full h-12 rounded-xl bg-gray-100 border-none px-4 font-bold text-gray-900 focus:ring-0">
+              <SelectTrigger className="w-full h-12 rounded-xl bg-gray-100 border-none px-4 text-gray-900 focus:ring-0">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent className="z-[90]">
