@@ -56,6 +56,7 @@ export const CATEGORY_IMAGES: readonly CategoryImage[] = [
   { name: "Grocery", category: "Shopping", path: "/categories/shopping/dragonGrocery.png" },
   { name: "Hobbies", category: "Shopping", path: "/categories/shopping/dragonHobbies.png" },
   { name: "Home & Furniture", category: "Shopping", path: "/categories/shopping/dragonHome&Furniture.png" },
+  { name: "Learning & Development", category: "Shopping", path: "/categories/shopping/dragonLearning&Development.png" },
   { name: "Many Items", category: "Shopping", path: "/categories/shopping/dragonShopping.png", isDefault: true },
   { name: "Skincare", category: "Shopping", path: "/categories/shopping/dragonSkincare.png" },
   
