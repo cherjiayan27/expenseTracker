@@ -12,10 +12,6 @@ interface CategoryImagePickerProps {
 }
 
 function CategoryImagePickerComponent({ category, images, onImageSelect, isImageSelected }: CategoryImagePickerProps) {
-  if (images.length === 0) {
-    return null; // Don't show anything if no alternative images
-  }
-
   // Separate meal-time images for Food & Drinks category
   const { mealImages, otherImages } = useMemo(() => {
     if (category === "Food & Drinks") {
@@ -28,6 +24,10 @@ function CategoryImagePickerComponent({ category, images, onImageSelect, isImage
   }, [category, images]);
 
   const hasMealSection = category === "Food & Drinks" && mealImages.length > 0;
+
+  if (images.length === 0) {
+    return null; // Don't show anything if no alternative images
+  }
 
   return (
     <div className="space-y-6">
