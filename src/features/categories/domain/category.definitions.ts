@@ -50,7 +50,14 @@ export const CATEGORY_IMAGES: readonly CategoryImage[] = [
   { name: "Train", category: "Transport", path: "/categories/transport/dragonTrain.png" },
   
   // Shopping
-  { name: "Shopping", category: "Shopping", path: "/categories/shopping/dragonShopping.png", isDefault: true },
+  { name: "Apparels", category: "Shopping", path: "/categories/shopping/dragonApparels.png" },
+  { name: "Electronics", category: "Shopping", path: "/categories/shopping/dragonElectronics.png" },
+  { name: "Game & Media", category: "Shopping", path: "/categories/shopping/dragonGame&Media.png" },
+  { name: "Grocery", category: "Shopping", path: "/categories/shopping/dragonGrocery.png" },
+  { name: "Hobbies", category: "Shopping", path: "/categories/shopping/dragonHobbies.png" },
+  { name: "Home & Furniture", category: "Shopping", path: "/categories/shopping/dragonHome&Furniture.png" },
+  { name: "Many Items", category: "Shopping", path: "/categories/shopping/dragonShopping.png", isDefault: true },
+  { name: "Skincare", category: "Shopping", path: "/categories/shopping/dragonSkincare.png" },
   
   // Entertainment
   { name: "Arcade", category: "Entertainment", path: "/categories/entertainment/dragonArcade.png" },

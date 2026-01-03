@@ -26,13 +26,16 @@ export default function CategoriesPage() {
   const defaultImages = isLoaded ? getDefaultImages() : [];
   const selectionCount = isLoaded ? getSelectionCount() : { current: 0, min: 6, max: 10 };
 
-  // Get alternatives grouped by category
+  // Get alternatives grouped by category (exclude "Other" category)
   const alternativesByCategory: Record<ExpenseCategory, CategoryImage[]> = {} as Record<ExpenseCategory, CategoryImage[]>;
   
   if (isLoaded) {
     const categories = getCategoriesWithImages();
     categories.forEach((category) => {
-      alternativesByCategory[category] = getAlternativeImages(category);
+      // Hide "Other" category from selection
+      if (category !== "Other") {
+        alternativesByCategory[category] = getAlternativeImages(category);
+      }
     });
   }
 
