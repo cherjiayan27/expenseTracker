@@ -16,6 +16,7 @@ export default function CategoriesPage() {
     isMaxReached,
     isMinReached,
     getSelectionCount,
+    isImageSelected,
   } = useCategoryPreferences();
 
   const [showMaxWarning, setShowMaxWarning] = useState(false);
@@ -139,6 +140,7 @@ export default function CategoriesPage() {
           </div>
           <SelectionGrid 
             alternativesByCategory={alternativesByCategory}
+            isImageSelected={(path) => isLoaded ? isImageSelected(path) : false}
             onImageSelect={(_, path) => handleImageSelect(path)}
           />
         </section>

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { SelectableImageCard } from "./SelectableImageCard";
 import type { ExpenseCategory, CategoryImage } from "../domain/category.types";
 
@@ -7,9 +8,10 @@ interface CategoryImagePickerProps {
   category: ExpenseCategory;
   images: CategoryImage[];
   onImageSelect: (imagePath: string) => void;
+  isImageSelected?: (path: string) => boolean;
 }
 
-export function CategoryImagePicker({ category, images, onImageSelect }: CategoryImagePickerProps) {
+function CategoryImagePickerComponent({ category, images, onImageSelect, isImageSelected }: CategoryImagePickerProps) {
   if (images.length === 0) {
     return null; // Don't show anything if no alternative images
   }
@@ -25,6 +27,7 @@ export function CategoryImagePicker({ category, images, onImageSelect }: Categor
           <div key={image.path} className="w-40 shrink-0 snap-start">
             <SelectableImageCard
               image={image}
+              isSelected={isImageSelected ? isImageSelected(image.path) : false}
               onSelect={onImageSelect}
             />
           </div>
@@ -33,4 +36,6 @@ export function CategoryImagePicker({ category, images, onImageSelect }: Categor
     </div>
   );
 }
+
+export const CategoryImagePicker = memo(CategoryImagePickerComponent);
 

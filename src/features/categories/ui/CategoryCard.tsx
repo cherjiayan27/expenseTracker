@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { memo } from "react";
 import { X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import type { CategoryImage } from "../domain/category.types";
@@ -11,7 +12,7 @@ interface CategoryCardProps {
   showRemove?: boolean;
 }
 
-export function CategoryCard({ image, onRemove, showRemove = false }: CategoryCardProps) {
+function CategoryCardComponent({ image, onRemove, showRemove = false }: CategoryCardProps) {
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onRemove) {
@@ -43,8 +44,8 @@ export function CategoryCard({ image, onRemove, showRemove = false }: CategoryCa
           <Image
             src={image.path}
             alt={image.name}
-            fill
             priority
+            fill
             className="object-contain transition-transform duration-300 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
@@ -58,3 +59,5 @@ export function CategoryCard({ image, onRemove, showRemove = false }: CategoryCa
     </Card>
   );
 }
+
+export const CategoryCard = memo(CategoryCardComponent);

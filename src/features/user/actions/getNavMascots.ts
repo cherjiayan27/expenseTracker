@@ -15,11 +15,12 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
   try {
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
+    const imageByPath = new Map(CATEGORY_IMAGES.map((img) => [img.path, img]));
     
     if (!user) {
       // Return default mascots for unauthenticated users
       return buildDefaultSelectionPaths(CATEGORY_IMAGES)
-        .map(path => CATEGORY_IMAGES.find(img => img.path === path))
+        .map(path => imageByPath.get(path))
         .filter((img): img is CategoryImage => Boolean(img));
     }
 
@@ -36,7 +37,7 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
       
       // Map paths to CategoryImage objects
       const mascots = paths
-        .map(path => CATEGORY_IMAGES.find(img => img.path === path))
+        .map(path => imageByPath.get(path))
         .filter((img): img is CategoryImage => img !== undefined)
         .slice(0, SELECTION_LIMITS.max);
       
@@ -48,7 +49,7 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
     // Fallback to default mascots
     const defaultPaths = buildDefaultSelectionPaths(CATEGORY_IMAGES);
     return defaultPaths
-      .map(path => CATEGORY_IMAGES.find(img => img.path === path))
+      .map(path => imageByPath.get(path))
       .filter((img): img is CategoryImage => Boolean(img));
       
   } catch (error) {
