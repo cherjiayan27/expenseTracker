@@ -26,16 +26,22 @@ export interface CategoryImage {
 export const CATEGORY_IMAGES: readonly CategoryImage[] = [
   // Food & Drinks
   { name: "Beer", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonBeer.png" },
+  { name: "Bottled Drink", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonBottledDrink.png" },
   { name: "Bread", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonBread.png" },
+  { name: "Breakfast", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonBreakfast.png" },
   { name: "Cake", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonCake.png" },
   { name: "Cereal", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonCereal.png" },
   { name: "Coffee", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonCoffee.png" },
+  { name: "Dessert", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonDessert.png" },
+  { name: "Dinner", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonDinner.png" },
   { name: "Fruit", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonFruit.png" },
   { name: "Ice Cream", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonIceCream.png" },
+  { name: "Lunch", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonLunch.png" },
   { name: "Noodles", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonNoodles.png" },
   { name: "Pudding", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonPudding.png" },
   { name: "Rice", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonRice.png", isDefault: true },
   { name: "Scramble Eggs", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonScrambleEggs.png" },
+  { name: "Supper", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonSupper.png" },
   { name: "Tea", category: "Food & Drinks", path: "/categories/food-and-drinks/dragonTea.png" },
   
   // Transport
