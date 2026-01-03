@@ -16,8 +16,10 @@ function SelectableImageCardComponent({ image, onSelect, isSelected = false }: S
   return (
     <Card
       className={cn(
-        "group relative cursor-pointer overflow-hidden border border-gray-200 bg-white p-6 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-blue-400",
-        isSelected && "border-blue-500 ring-2 ring-blue-200 ring-offset-2 ring-offset-white"
+        "group relative cursor-pointer overflow-hidden bg-white p-6 transition-all duration-300 hover:shadow-lg",
+        isSelected 
+          ? "border-2 border-blue-500 shadow-lg shadow-blue-200/50" 
+          : "border-2 border-gray-200 hover:border-blue-400"
       )}
       onClick={() => onSelect(image.path)}
       role="button"

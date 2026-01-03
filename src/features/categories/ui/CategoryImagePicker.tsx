@@ -22,7 +22,7 @@ function CategoryImagePickerComponent({ category, images, onImageSelect, isImage
       <h3 className="text-lg font-semibold text-gray-900">{category}</h3>
       
       {/* Horizontal Scrollable Layout */}
-      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x">
+      <div className="flex gap-4 overflow-x-auto pb-4 px-2 no-scrollbar snap-x">
         {images.map((image) => (
           <div key={image.path} className="w-40 shrink-0 snap-start">
             <SelectableImageCard
