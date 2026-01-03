@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import type { Expense } from "../domain/expense.types";
+import type { Expense } from "../../domain/expense.types";
 import { DebtCard } from "./DebtCard";
-import { calculateTotal } from "../domain/calculations/expense-totals";
+import { calculateTotal } from "../../domain/calculations/expense-totals";
 
 type DebtListProps = {
   debts: Expense[];

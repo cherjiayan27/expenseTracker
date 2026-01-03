@@ -1,6 +1,6 @@
-import type { Expense } from "../domain/expense.types";
-import { formatCurrency } from "../domain/formatters/currency.formatter";
-import { getCategoryDisplayName } from "../domain/expense.helpers";
+import type { Expense } from "../../domain/expense.types";
+import { formatCurrency } from "../../domain/formatters/currency.formatter";
+import { getCategoryDisplayName } from "../../domain/expense.helpers";
 
 type DebtCardProps = {
   expense: Expense;

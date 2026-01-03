@@ -3,8 +3,7 @@
 import { useMemo } from "react";
 import { CalendarStrip, BudgetProgress, DashboardLayout } from "@/features/dashboard/ui";
 import { useBottomSheetState, useDateFilter } from "@/features/dashboard/hooks";
-import { ExpenseList, DebtList } from "@/features/expenses";
-import { AddExpenseBottomSheet } from "@/features/expenses/ui/add-expense-bottom-sheet";
+import { ExpenseList, DebtList, AddExpenseBottomSheet } from "@/features/expenses";
 import { filterDebts, filterNonDebts } from "@/features/expenses/domain/calculations/expense-filters";
 import type { Expense } from "@/features/expenses/domain/expense.types";
 import { BottomNav } from "@/components/navigation/BottomNav";
@@ -40,7 +39,12 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
           <DebtList debts={allDebts} />
         </div>
         <div className="mt-6">
-          <ExpenseList expenses={filteredExpenses} isLoading={false} totalSpending={totalSpending} />
+          <ExpenseList
+            expenses={filteredExpenses}
+            isLoading={false}
+            totalSpending={totalSpending}
+            onSuccess={bottomSheet.onSuccess}
+          />
         </div>
       </DashboardLayout>
 

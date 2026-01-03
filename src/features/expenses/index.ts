@@ -17,10 +17,10 @@ export { useCreateExpense } from "./actions/useCreateExpense";
 export { useExpenseForm, useExpenseSubmission } from "./hooks";
 
 // UI Components
-export { ExpenseCard } from "./ui/ExpenseCard";
-export { ExpenseList } from "./ui/ExpenseList";
-export { DebtCard } from "./ui/DebtCard";
-export { DebtList } from "./ui/DebtList";
+export { ExpenseCard, ExpenseList } from "./ui/expense-list";
+export { DebtCard, DebtList } from "./ui/debt-list";
+export { AddExpenseBottomSheet } from "./ui/add-expense";
+export { EditExpenseModal } from "./ui/edit-expense";
 
 // Server Actions (for Server Components)
 export { getExpenses } from "./actions/getExpenses";

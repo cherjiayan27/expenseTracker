@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { createExpense } from "../actions/createExpense";
+import { createExpense } from "../../actions/createExpense";
 import type { ExpenseCategory } from "@/features/categories/domain/category.definitions";
 
 interface UseExpenseSubmissionParams {

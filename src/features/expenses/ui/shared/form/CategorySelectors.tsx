@@ -49,7 +49,7 @@ export function CategorySelectors({
           <SelectTrigger className="w-full h-12 rounded-xl bg-gray-50 border-gray-100">
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
-          <SelectContent className="z-[70]">
+          <SelectContent className="z-[90]">
             {EXPENSE_CATEGORIES.map((cat) => (
               <SelectItem key={cat} value={cat}>
                 {cat}
@@ -73,7 +73,7 @@ export function CategorySelectors({
             <SelectTrigger className="w-full h-12 rounded-xl bg-gray-50 border-gray-100">
               <SelectValue placeholder="Select one" />
             </SelectTrigger>
-            <SelectContent className="z-[70]">
+            <SelectContent className="z-[90]">
               {subCategoryOptions.map((item) => (
                 <SelectItem key={item.name} value={item.name}>
                   {item.name}

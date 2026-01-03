@@ -1,13 +1,13 @@
 "use client";
 
-import { useExpenseForm, useExpenseSubmission } from "../hooks";
+import { useExpenseForm, useExpenseSubmission } from "../../hooks";
 import {
   NumberKeypad,
   AmountDisplay,
   CategorySelectors,
   NoteInput,
   FormActions
-} from "./expense-form";
+} from "../shared/form";
 
 interface AddExpenseBottomSheetProps {
   isOpen: boolean;
