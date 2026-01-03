@@ -66,7 +66,7 @@ export function CategorySelectors({
             value={textFieldValue}
             onChange={(e) => onSubCategoryChange(e.target.value || null)}
             placeholder="Type something"
-            className="w-full h-12 px-6 rounded-xl bg-gray-100 border-none text-sm font-medium text-black hover:bg-gray-200/50 transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="w-full h-12 px-6 rounded-xl bg-gray-100 border-none text-base font-medium text-black hover:bg-gray-200/50 transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         ) : (
           <Select value={subCategory || ""} onValueChange={(value) => onSubCategoryChange(value || null)}>
