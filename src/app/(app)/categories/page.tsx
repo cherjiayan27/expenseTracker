@@ -68,36 +68,17 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="relative">
-      {/* High-End Grain Texture */}
-      <div className="fixed inset-0 opacity-[0.25] pointer-events-none contrast-125 brightness-100 z-0">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <filter id="noiseFilterCategories">
-            <feTurbulence 
-              type="fractalNoise" 
-              baseFrequency="0.6" 
-              numOctaves="3" 
-              stitchTiles="stitch" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noiseFilterCategories)" />
-        </svg>
-      </div>
-
-      {/* Subtle Ambient Background Detail */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#F5F5F0] blur-[120px] opacity-60" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#F0F0EB] blur-[120px] opacity-40" />
-      </div>
+    <div className="min-h-screen bg-white pb-32 relative">
 
       {/* Max Warning Toast */}
       {showMaxWarning && (
-        <div className="fixed top-20 right-4 z-50 animate-in slide-in-from-top">
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
           <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 shadow-lg">
             <p className="text-sm font-medium text-amber-900">
-              Maximum limit reached! You have {selectionCount.max} images selected.
+              {selectionCount.max}-image limit reached.
             </p>
             <p className="text-xs text-amber-700 mt-1">
-              Remove an image to add a new one.
+              Remove one to add another.
             </p>
           </div>
         </div>
@@ -105,34 +86,38 @@ export default function CategoriesPage() {
 
       {/* Min Warning Toast */}
       {showMinWarning && (
-        <div className="fixed top-20 right-4 z-50 animate-in slide-in-from-top">
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
           <div className="rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 shadow-lg">
             <p className="text-sm font-medium text-blue-900">
-              Minimum limit reached! You must keep at least {selectionCount.min} images.
+              Keep at least {selectionCount.min} images.
             </p>
             <p className="text-xs text-blue-700 mt-1">
-              Add more images before removing this one.
+              Add an image to remove this one.
             </p>
           </div>
         </div>
       )}
 
       {/* Main Content */}
-      <div className="relative z-10 space-y-12">
+      <div className="relative z-10 space-y-12 pt-3">
         {/* Default Section */}
         <section>
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Default</h1>
-                <p className="mt-2 text-gray-600">Your selected category images</p>
+          <div className="mb-6 text-center">
+            <h1 className="text-3xl font-bold text-gray-900">Default</h1>
+            <p className="mt-2 text-gray-600">Your selected category images</p>
+            
+            <div className="mt-4 max-w-xs mx-auto flex items-center gap-3">
+              <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full transition-all duration-500 ease-out rounded-full ${
+                    selectionCount.current < selectionCount.min ? 'bg-blue-500' : 'bg-black'
+                  }`}
+                  style={{ width: `${(selectionCount.current / selectionCount.max) * 100}%` }}
+                />
               </div>
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">
-                  {selectionCount.current} / {selectionCount.max}
-                </p>
-                <p className="text-xs text-gray-600">images selected (min: {selectionCount.min})</p>
-              </div>
+              <span className="text-sm font-medium text-gray-900 shrink-0">
+                {selectionCount.current}/{selectionCount.max}
+              </span>
             </div>
           </div>
           <CategoryGrid 
@@ -144,8 +129,8 @@ export default function CategoriesPage() {
 
         {/* Selection Section */}
         <section>
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Selection</h2>
+          <div className="mb-6 text-center">
+            <h2 className="text-3xl font-bold text-gray-900">Selection</h2>
             <p className="mt-2 text-gray-600">
               {isMaxReached() 
                 ? "Remove an image above to add a new one" 

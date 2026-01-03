@@ -19,14 +19,15 @@ export function CategoryImagePicker({ category, images, onImageSelect }: Categor
       {/* Category Header */}
       <h3 className="text-lg font-semibold text-gray-900">{category}</h3>
       
-      {/* Image Grid */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      {/* Horizontal Scrollable Layout */}
+      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x">
         {images.map((image) => (
-          <SelectableImageCard
-            key={image.path}
-            image={image}
-            onSelect={onImageSelect}
-          />
+          <div key={image.path} className="w-40 shrink-0 snap-start">
+            <SelectableImageCard
+              image={image}
+              onSelect={onImageSelect}
+            />
+          </div>
         ))}
       </div>
     </div>

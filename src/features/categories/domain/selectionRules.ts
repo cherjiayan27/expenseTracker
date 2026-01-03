@@ -2,7 +2,7 @@ import type { CategoryImage } from "./category.types";
 
 // Central limits for category mascot selections
 export const SELECTION_LIMITS = {
-  min: 6,
+  min: 4,
   max: 10,
 } as const;
 

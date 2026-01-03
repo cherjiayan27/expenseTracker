@@ -73,7 +73,9 @@ export function useCategorySelectionState({
   };
 
   const getDefaultImages = (): CategoryImage[] => {
-    return allImages.filter((img) => selectedImagePaths.includes(img.path));
+    return selectedImagePaths
+      .map(path => allImages.find(img => img.path === path))
+      .filter((img): img is CategoryImage => img !== undefined);
   };
 
   const getAlternativeImages = (category: ExpenseCategory): CategoryImage[] => {

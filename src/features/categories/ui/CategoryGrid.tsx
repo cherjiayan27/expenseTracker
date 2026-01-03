@@ -12,15 +12,16 @@ interface CategoryGridProps {
 export function CategoryGrid({ images, onRemove, showRemove = false }: CategoryGridProps) {
   return (
     <div className="mt-8">
-      {/* Grid Layout - 2x2 on mobile, 2x3 on larger screens */}
-      <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Horizontal Scrollable Layout */}
+      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x">
         {images.map((image) => (
-          <CategoryCard
-            key={image.path}
-            image={image}
-            onRemove={onRemove}
-            showRemove={showRemove}
-          />
+          <div key={image.path} className="w-40 shrink-0 snap-start">
+            <CategoryCard
+              image={image}
+              onRemove={onRemove}
+              showRemove={showRemove}
+            />
+          </div>
         ))}
       </div>
     </div>
