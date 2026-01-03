@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { getNavMascots } from "@/features/user/actions/getNavMascots";
+import { subscribeCategoryPreferencesUpdated } from "@/features/user/actions/categoryPreferencesEvents";
 import { getTodayDate } from "@/app/(app)/dashboard/lib/date-utils";
 import type { CategoryImage } from "@/features/categories/domain/category.types";
 
@@ -37,14 +38,12 @@ export function BottomNav({ onAddExpense, selectedDate }: BottomNavProps) {
     loadMascots();
 
     // Listen for preference updates from Categories page
-    const handlePreferenceUpdate = () => {
+    const unsubscribe = subscribeCategoryPreferencesUpdated(() => {
       loadMascots();
-    };
-    
-    window.addEventListener('categoryPreferencesUpdated', handlePreferenceUpdate);
+    });
     
     return () => {
-      window.removeEventListener('categoryPreferencesUpdated', handlePreferenceUpdate);
+      unsubscribe();
     };
   }, []);
 

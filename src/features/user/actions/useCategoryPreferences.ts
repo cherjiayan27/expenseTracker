@@ -4,21 +4,27 @@ import { useState, useEffect } from "react";
 import { createBrowserClient } from "@/server/supabase/client.browser";
 import { CATEGORY_IMAGES } from "@/features/categories/domain/category.definitions";
 import type { ExpenseCategory, CategoryImage } from "@/features/categories/domain/category.types";
+import {
+  SELECTION_LIMITS,
+  buildDefaultSelectionPaths,
+} from "@/features/categories/domain/selectionRules";
 import type { CategoryMascotPreferences } from "../domain/preferences.types";
 import { saveCategoryMascotPreferences } from "./preferences.actions";
-
-const MAX_SELECTIONS = 10;
-const MIN_SELECTIONS = 6;
+import { emitCategoryPreferencesUpdated } from "./categoryPreferencesEvents";
+import { useCategorySelectionState } from "./useCategorySelectionState";
 
 /**
  * Client-side hook for managing category preferences
  * Loads from Supabase and syncs changes back
  */
 export function useCategoryPreferences() {
-  const [selectedImagePaths, setSelectedImagePaths] = useState<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const selection = useCategorySelectionState({
+    allImages: CATEGORY_IMAGES,
+    initialSelectedPaths: buildDefaultSelectionPaths(CATEGORY_IMAGES),
+  });
 
   // Load preferences from Supabase on mount
   useEffect(() => {
@@ -51,10 +57,10 @@ export function useCategoryPreferences() {
           const prefs = data.preference_value as CategoryMascotPreferences;
           const paths = prefs.selectedImagePaths || [];
           
-          if (paths.length < MIN_SELECTIONS) {
+          if (paths.length < SELECTION_LIMITS.min) {
             initializeDefaults();
           } else {
-            setSelectedImagePaths(paths.slice(0, MAX_SELECTIONS));
+            selection.replaceSelection(paths.slice(0, SELECTION_LIMITS.max));
           }
         } else {
           // No preferences saved yet, use defaults
@@ -73,20 +79,7 @@ export function useCategoryPreferences() {
 
   // Initialize with hardcoded default images
   const initializeDefaults = () => {
-    const defaultPaths = CATEGORY_IMAGES
-      .filter((img) => img.isDefault)
-      .map((img) => img.path);
-    
-    if (defaultPaths.length < MIN_SELECTIONS) {
-      const nonDefaultImages = CATEGORY_IMAGES.filter((img) => !img.isDefault);
-      const additionalNeeded = MIN_SELECTIONS - defaultPaths.length;
-      const additionalPaths = nonDefaultImages
-        .slice(0, additionalNeeded)
-        .map((img) => img.path);
-      setSelectedImagePaths([...defaultPaths, ...additionalPaths].slice(0, MAX_SELECTIONS));
-    } else {
-      setSelectedImagePaths(defaultPaths.slice(0, MAX_SELECTIONS));
-    }
+    selection.replaceSelection(buildDefaultSelectionPaths(CATEGORY_IMAGES));
   };
 
   // Save to Supabase (only if authenticated)
@@ -105,9 +98,6 @@ export function useCategoryPreferences() {
         if (result.error !== "User not authenticated") {
           console.error("Failed to save preferences:", result.error);
         }
-      } else {
-        // Notify other components (like BottomNav) that preferences were updated
-        window.dispatchEvent(new CustomEvent('categoryPreferencesUpdated'));
       }
     } catch (error) {
       console.error("Error persisting preferences:", error);
@@ -116,81 +106,41 @@ export function useCategoryPreferences() {
     }
   };
 
-  // Get current default/selected images
-  const getDefaultImages = (): CategoryImage[] => {
-    return CATEGORY_IMAGES.filter((img) => selectedImagePaths.includes(img.path));
-  };
-
-  // Get alternative images (all non-selected images)
-  const getAlternativeImages = (category: ExpenseCategory): CategoryImage[] => {
-    return CATEGORY_IMAGES.filter(
-      (img) => img.category === category && !selectedImagePaths.includes(img.path)
-    );
-  };
-
   // Select/add an image to defaults
   const selectImage = (imagePath: string): boolean => {
-    if (selectedImagePaths.includes(imagePath)) {
-      return false; // Already selected
+    const result = selection.selectImage(imagePath);
+    if (!result.changed) {
+      return false; // Already selected or max limit reached
     }
-    
-    if (selectedImagePaths.length >= MAX_SELECTIONS) {
-      return false; // Max limit reached
-    }
-    
-    const newPaths = [...selectedImagePaths, imagePath];
-    setSelectedImagePaths(newPaths);
-    persistToDatabase(newPaths);
+
+    persistToDatabase(result.paths);
+    emitCategoryPreferencesUpdated();
     return true;
   };
 
   // Remove an image from defaults
   const removeImage = (imagePath: string): boolean => {
-    if (selectedImagePaths.length <= MIN_SELECTIONS) {
+    const result = selection.removeImage(imagePath);
+    if (!result.changed) {
       return false; // Min limit reached
     }
     
-    const newPaths = selectedImagePaths.filter((path) => path !== imagePath);
-    setSelectedImagePaths(newPaths);
-    persistToDatabase(newPaths);
+    persistToDatabase(result.paths);
+    emitCategoryPreferencesUpdated();
     return true;
-  };
-
-  // Check if an image is selected
-  const isImageSelected = (imagePath: string): boolean => {
-    return selectedImagePaths.includes(imagePath);
-  };
-
-  // Check if max limit is reached
-  const isMaxReached = (): boolean => {
-    return selectedImagePaths.length >= MAX_SELECTIONS;
-  };
-
-  // Check if min limit is reached
-  const isMinReached = (): boolean => {
-    return selectedImagePaths.length <= MIN_SELECTIONS;
-  };
-
-  // Get current count, min, and max
-  const getSelectionCount = () => {
-    return {
-      current: selectedImagePaths.length,
-      min: MIN_SELECTIONS,
-      max: MAX_SELECTIONS,
-    };
   };
 
   return {
     isLoaded,
     isSaving,
-    getDefaultImages,
-    getAlternativeImages,
+    getDefaultImages: selection.getDefaultImages,
+    getAlternativeImages: selection.getAlternativeImages,
     selectImage,
     removeImage,
-    isImageSelected,
-    isMaxReached,
-    isMinReached,
-    getSelectionCount,
+    isImageSelected: selection.isImageSelected,
+    isMaxReached: selection.isMaxReached,
+    isMinReached: selection.isMinReached,
+    getSelectionCount: selection.getSelectionCount,
   };
 }
 

@@ -4,9 +4,11 @@ import { createServerClient } from "@/server/supabase/client.server";
 import { PreferencesRepository } from "../data/preferences.repository";
 import type { CategoryMascotPreferences } from "../domain/preferences.types";
 import { CATEGORY_IMAGES } from "@/features/categories/domain/category.definitions";
-
-const MIN_SELECTIONS = 6;
-const MAX_SELECTIONS = 10;
+import {
+  SELECTION_LIMITS,
+  validateSelectionCount,
+  buildDefaultSelectionPaths,
+} from "@/features/categories/domain/selectionRules";
 
 /**
  * Get category mascot preferences for the current user
@@ -51,24 +53,18 @@ export async function saveCategoryMascotPreferences(
     }
     
     // Validate input
-    if (selectedImagePaths.length < MIN_SELECTIONS) {
+    const validation = validateSelectionCount(selectedImagePaths);
+    if (!validation.ok) {
       return {
         success: false,
-        error: `You must select at least ${MIN_SELECTIONS} images`,
-      };
-    }
-    
-    if (selectedImagePaths.length > MAX_SELECTIONS) {
-      return {
-        success: false,
-        error: `You can select at most ${MAX_SELECTIONS} images`,
+        error: validation.error,
       };
     }
     
     const repo = new PreferencesRepository(supabase);
     
     const preferenceValue: CategoryMascotPreferences = {
-      selectedImagePaths: selectedImagePaths.slice(0, MAX_SELECTIONS),
+      selectedImagePaths: selectedImagePaths.slice(0, SELECTION_LIMITS.max),
     };
     
     await repo.savePreference({
@@ -107,20 +103,6 @@ export async function resetCategoryMascotPreferences(): Promise<{ success: boole
  * Helper to get default image paths
  */
 function getDefaultImagePaths(): string[] {
-  const defaultPaths = CATEGORY_IMAGES
-    .filter((img) => img.isDefault)
-    .map((img) => img.path);
-  
-  // Ensure we have at least MIN_SELECTIONS
-  if (defaultPaths.length < MIN_SELECTIONS) {
-    const nonDefaultImages = CATEGORY_IMAGES.filter((img) => !img.isDefault);
-    const additionalNeeded = MIN_SELECTIONS - defaultPaths.length;
-    const additionalPaths = nonDefaultImages
-      .slice(0, additionalNeeded)
-      .map((img) => img.path);
-    return [...defaultPaths, ...additionalPaths].slice(0, MAX_SELECTIONS);
-  }
-  
-  return defaultPaths.slice(0, MAX_SELECTIONS);
+  return buildDefaultSelectionPaths(CATEGORY_IMAGES);
 }
 

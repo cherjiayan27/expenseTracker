@@ -2,6 +2,7 @@
 
 import { createServerClient } from "@/server/supabase/client.server";
 import { CATEGORY_IMAGES } from "@/features/categories/domain/category.definitions";
+import { buildDefaultSelectionPaths, SELECTION_LIMITS } from "@/features/categories/domain/selectionRules";
 import type { CategoryImage } from "@/features/categories/domain/category.types";
 import type { CategoryMascotPreferences } from "../domain/preferences.types";
 import type { Tables } from "@/shared/types/database.types";
@@ -17,9 +18,9 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
     
     if (!user) {
       // Return default mascots for unauthenticated users
-      return CATEGORY_IMAGES
-        .filter((img) => img.isDefault)
-        .slice(0, 10);
+      return buildDefaultSelectionPaths(CATEGORY_IMAGES)
+        .map(path => CATEGORY_IMAGES.find(img => img.path === path))
+        .filter((img): img is CategoryImage => Boolean(img));
     }
 
     const { data } = await supabase
@@ -37,17 +38,18 @@ export async function getNavMascots(): Promise<CategoryImage[]> {
       const mascots = paths
         .map(path => CATEGORY_IMAGES.find(img => img.path === path))
         .filter((img): img is CategoryImage => img !== undefined)
-        .slice(0, 10);
+        .slice(0, SELECTION_LIMITS.max);
       
-      if (mascots.length >= 6) {
+      if (mascots.length >= SELECTION_LIMITS.min) {
         return mascots;
       }
     }
     
     // Fallback to default mascots
-    return CATEGORY_IMAGES
-      .filter((img) => img.isDefault)
-      .slice(0, 10);
+    const defaultPaths = buildDefaultSelectionPaths(CATEGORY_IMAGES);
+    return defaultPaths
+      .map(path => CATEGORY_IMAGES.find(img => img.path === path))
+      .filter((img): img is CategoryImage => Boolean(img));
       
   } catch (error) {
     console.error("Error fetching nav mascots:", error);
