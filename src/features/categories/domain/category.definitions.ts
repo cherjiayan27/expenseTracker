@@ -65,6 +65,9 @@ export const CATEGORY_IMAGES: readonly CategoryImage[] = [
   { name: "Hair Massage", category: "Self-Care", path: "/categories/self-care/dragonHairMassage.png" },
   { name: "Hair Perm", category: "Self-Care", path: "/categories/self-care/dragonHairPerm.png" },
   { name: "Hair Treatment", category: "Self-Care", path: "/categories/self-care/dragonHairTreatment.png" },
+
+  // Other
+  { name: "Money Dragon", category: "Other", path: "/images/dragonWithMoney5.png", isDefault: true },
 ] as const;
 
 // Helper functions
