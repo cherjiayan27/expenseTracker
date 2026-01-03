@@ -13,8 +13,8 @@ export function DebtCard({ expense }: DebtCardProps) {
   // Get first letter of the person's name for avatar
   const initial = owedTo?.charAt(0).toUpperCase() || "?";
 
-  // Build the subtitle: "SubCategory • Category" or just category
-  const subtitleParts = [subCategory, categoryName].filter(Boolean);
+  // Build the subtitle: "Category • SubCategory" or just category
+  const subtitleParts = [categoryName, subCategory].filter(Boolean);
   const subtitle = subtitleParts.join(' • ');
 
   return (
