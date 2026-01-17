@@ -134,18 +134,6 @@ export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
           >
             Save
           </button>
-          <button
-            type="button"
-            className="text-xs font-semibold text-gray-500"
-            onPointerDown={(event) => event.preventDefault()}
-            onClick={(event) => {
-              event.stopPropagation();
-              cancelEdit();
-            }}
-            disabled={isPending}
-          >
-            Cancel
-          </button>
         </div>
       ) : (
         <button
