@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CalendarStrip, BudgetProgress, DashboardLayout } from "@/features/dashboard/ui";
 import { useBottomSheetState, useDateFilter } from "@/features/dashboard/hooks";
 import { ExpenseList, DebtList, AddExpenseBottomSheet } from "@/features/expenses";
@@ -17,6 +17,7 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
   // Split expenses into debts and regular expenses (memoized to avoid recalculating on every render)
   const allDebts = useMemo(() => filterDebts(expenses), [expenses]);
   const nonDebtExpenses = useMemo(() => filterNonDebts(expenses), [expenses]);
+  const [isDebtMultiSelect, setIsDebtMultiSelect] = useState(false);
 
   // Date filtering and selection (only for non-debt expenses)
   const {
@@ -36,7 +37,7 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
       <DashboardLayout header={<CalendarStrip onDateSelect={onDateSelect} />}>
         <BudgetProgress totalMonthlySpending={monthlySpending} monthlyBudget={monthlyBudget} />
         <div className="mt-16">
-          <DebtList debts={allDebts} />
+        <DebtList debts={allDebts} onMultiSelectChange={setIsDebtMultiSelect} />
         </div>
         <div className="mt-6">
           <ExpenseList
@@ -51,7 +52,7 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
       <BottomNav 
         onAddExpense={handleOpenAddExpense} 
         selectedDate={selectedDate}
-        isHidden={bottomSheet.isOpen}
+        isHidden={bottomSheet.isOpen || isDebtMultiSelect}
       />
 
       {/* Bottom Sheet Overlay */}
