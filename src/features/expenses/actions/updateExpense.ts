@@ -43,8 +43,8 @@ export async function updateExpense(
       amount,
       description: formData.get("description") || undefined,
       category: formData.get("category") || undefined,
-      subCategory: formData.get("subCategory") || null,
-      owedTo: formData.get("owedTo") || null,
+      subCategory: formData.get("subCategory") || undefined,
+      owedTo: formData.get("owedTo") || undefined,
       date: formData.get("date") || undefined,
     });
 
