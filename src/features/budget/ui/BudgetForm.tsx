@@ -173,7 +173,7 @@ export function BudgetForm() {
             disabled={isSaving || monthlyBudget <= 0 || !!(budget && monthlyBudget === budget.monthlyBudget)}
             className="flex-1 h-12 text-base font-bold rounded-2xl bg-black hover:bg-gray-800 text-white transition-all shadow-md"
           >
-            {isSaving ? "Saving..." : budget ? "Update Budget" : "Confirm Budget"}
+            {isSaving ? "Saving..." : budget ? "Update" : "Confirm Budget"}
           </Button>
         </div>
       </div>
