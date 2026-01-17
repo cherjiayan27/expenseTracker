@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { revalidateTag, revalidatePath } from "next/cache";
 import { createServerClient } from "@/server/supabase/client.server";
+import type { Database } from "@/shared/types/database.types";
 
 type MarkDebtsResult =
   | { success: true }
@@ -39,9 +40,14 @@ export async function markDebtsAsDone(
       };
     }
 
+    const updateData: Database["public"]["Tables"]["expenses"]["Update"] = {
+      owed_to: null,
+      date,
+    };
+
     const { error } = await supabase
       .from("expenses")
-      .update({ owed_to: null, date })
+      .update(updateData)
       .in("id", validation.data.ids)
       .eq("user_id", user.id);
 
