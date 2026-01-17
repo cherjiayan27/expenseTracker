@@ -3,8 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Plus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import useSWR, { mutate } from "swr";
 import { getNavMascots } from "@/features/user/actions/getNavMascots";
 import { subscribeCategoryPreferencesUpdated } from "@/features/user/actions/categoryPreferencesEvents";
 import { getTodayDate } from "@/app/(app)/dashboard/lib/date-utils";
@@ -17,30 +18,26 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: BottomNavProps) {
-  const [mascots, setMascots] = useState<CategoryImage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
+  
+  // Use SWR for smart caching
+  const { data: mascots = [], isLoading } = useSWR<CategoryImage[]>(
+    'nav-mascots',
+    getNavMascots,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000, // Cache for 1 minute
+    }
+  );
   
   // Get the currently selected date from URL or default to today
   const selectedDateParam = selectedDate || searchParams.get("date") || getTodayDate();
 
   useEffect(() => {
-    async function loadMascots() {
-      try {
-        const navMascots = await getNavMascots();
-        setMascots(navMascots);
-      } catch (error) {
-        console.error("Failed to load nav mascots:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    loadMascots();
-
     // Listen for preference updates from Categories page
     const unsubscribe = subscribeCategoryPreferencesUpdated(() => {
-      loadMascots();
+      mutate('nav-mascots'); // Smart cache invalidation
     });
     
     return () => {
