@@ -48,9 +48,11 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
         </div>
       </DashboardLayout>
 
-      {!bottomSheet.isOpen && (
-        <BottomNav onAddExpense={handleOpenAddExpense} selectedDate={selectedDate} />
-      )}
+      <BottomNav 
+        onAddExpense={handleOpenAddExpense} 
+        selectedDate={selectedDate}
+        isHidden={bottomSheet.isOpen}
+      />
 
       {/* Bottom Sheet Overlay */}
       {bottomSheet.isOpen && (

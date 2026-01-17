@@ -13,9 +13,10 @@ import type { CategoryImage } from "@/features/categories/domain/category.types"
 interface BottomNavProps {
   onAddExpense?: () => void;
   selectedDate?: string;
+  isHidden?: boolean;
 }
 
-export function BottomNav({ onAddExpense, selectedDate }: BottomNavProps) {
+export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: BottomNavProps) {
   const [mascots, setMascots] = useState<CategoryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -48,7 +49,9 @@ export function BottomNav({ onAddExpense, selectedDate }: BottomNavProps) {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+    <div className={`fixed bottom-0 left-0 right-0 z-50 md:hidden ${
+      isHidden ? 'translate-y-full pointer-events-none' : 'translate-y-0'
+    }`}>
       {/* Bottom Actions Container */}
       <div className="w-full pb-8 shrink-0 px-4">
         {/* Navigation Bar */}
