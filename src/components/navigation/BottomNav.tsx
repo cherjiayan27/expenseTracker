@@ -11,15 +11,17 @@ import type { CategoryImage } from "@/features/categories/domain/category.types"
 
 interface BottomNavProps {
   onAddExpense?: () => void;
+  onMascotTap?: (image: CategoryImage) => void;
   selectedDate?: string;
   isHidden?: boolean;
+  pendingMascotPath?: string | null;
 }
 
-export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: BottomNavProps) {
+export function BottomNav({ onAddExpense, onMascotTap, selectedDate, isHidden = false, pendingMascotPath = null }: BottomNavProps) {
   const searchParams = useSearchParams();
   
   // Use SWR for smart caching
-  const { data: mascots = [], isLoading } = useSWR<CategoryImage[]>(
+  const { data: mascots = [], isLoading, error } = useSWR<CategoryImage[]>(
     'nav-mascots',
     getNavMascots,
     {
@@ -28,6 +30,8 @@ export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: Bott
       dedupingInterval: 60000, // Cache for 1 minute
     }
   );
+
+  const hasError = !!error;
   
   // Get the currently selected date from URL or default to today
   const selectedDateParam = selectedDate || searchParams.get("date") || getTodayDate();
@@ -53,15 +57,16 @@ export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: Bott
                     <div className="w-12 h-12 rounded-lg bg-gray-200 animate-pulse" />
                   </div>
                 ))
+              ) : hasError ? (
+                // Error state
+                <div className="flex items-center justify-center h-full px-4 text-sm text-gray-500">
+                  Failed to load mascots
+                </div>
               ) : (
-                mascots.map((image, index) => (
-                  <Link
-                    key={`${image.path}-${index}`}
-                    href="#"
-                    className="flex items-center justify-center w-14 h-14 flex-shrink-0"
-                    data-testid={`nav-${image.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <div className="relative w-12 h-12">
+                mascots.map((image, index) => {
+                  const isPending = pendingMascotPath === image.path;
+                  const mascot = (
+                    <div className={`relative w-12 h-12 ${isPending ? 'opacity-50' : ''}`}>
                       <Image
                         src={image.path}
                         alt={image.name}
@@ -71,8 +76,36 @@ export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: Bott
                         priority={index < 4}
                       />
                     </div>
-                  </Link>
-                ))
+                  );
+
+                  if (onMascotTap) {
+                    return (
+                      <button
+                        key={`${image.path}-${index}`}
+                        type="button"
+                        className="flex items-center justify-center w-14 h-14 flex-shrink-0 disabled:cursor-not-allowed"
+                        data-testid={`nav-${image.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        aria-label={`Quick add ${image.name} expense`}
+                        disabled={isPending}
+                        onClick={() => onMascotTap(image)}
+                      >
+                        {mascot}
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={`${image.path}-${index}`}
+                      href="#"
+                      className="flex items-center justify-center w-14 h-14 flex-shrink-0"
+                      data-testid={`nav-${image.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      aria-label={`${image.name}`}
+                    >
+                      {mascot}
+                    </Link>
+                  );
+                })
               )}
             </div>
           </div>

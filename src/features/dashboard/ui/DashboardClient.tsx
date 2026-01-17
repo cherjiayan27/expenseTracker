@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { CalendarStrip, BudgetProgress, DashboardLayout } from "@/features/dashboard/ui";
 import { useBottomSheetState, useDateFilter } from "@/features/dashboard/hooks";
 import { ExpenseList, DebtList, AddExpenseBottomSheet } from "@/features/expenses";
 import { filterDebts, filterNonDebts } from "@/features/expenses/domain/calculations/expense-filters";
 import type { Expense } from "@/features/expenses/domain/expense.types";
+import type { CategoryImage } from "@/features/categories/domain/category.types";
+import { createExpense } from "@/features/expenses/actions/createExpense";
 import { BottomNav } from "@/components/navigation/BottomNav";
+import { getTodayDate } from "@/app/(app)/dashboard/lib/date-utils";
 
 interface DashboardClientProps {
   expenses: Expense[];
@@ -31,6 +34,33 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
   // Bottom sheet state management
   const bottomSheet = useBottomSheetState();
   const handleOpenAddExpense = () => bottomSheet.open(selectedDate);
+  const [, startTransition] = useTransition();
+  const [pendingMascot, setPendingMascot] = useState<string | null>(null);
+
+  const handleMascotTap = (image: CategoryImage) => {
+    setPendingMascot(image.path);
+    const dateToUse = selectedDate || getTodayDate();
+    const formData = new FormData();
+    formData.append("amount", "1");
+    formData.append("category", image.category);
+    formData.append("subCategory", image.name);
+    formData.append("date", dateToUse);
+
+    startTransition(async () => {
+      try {
+        const result = await createExpense(undefined, formData);
+        if (result.success) {
+          bottomSheet.onSuccess();
+        } else {
+          console.error("Mascot quick add failed:", result.error);
+        }
+      } catch (error) {
+        console.error("Mascot quick add failed:", error);
+      } finally {
+        setPendingMascot(null);
+      }
+    });
+  };
 
   return (
     <>
@@ -49,10 +79,12 @@ export function DashboardClient({ expenses, monthlyBudget }: DashboardClientProp
         </div>
       </DashboardLayout>
 
-      <BottomNav 
-        onAddExpense={handleOpenAddExpense} 
+      <BottomNav
+        onAddExpense={handleOpenAddExpense}
+        onMascotTap={handleMascotTap}
         selectedDate={selectedDate}
         isHidden={bottomSheet.isOpen || isDebtMultiSelect}
+        pendingMascotPath={pendingMascot}
       />
 
       {/* Bottom Sheet Overlay */}
