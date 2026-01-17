@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useExpenseForm, useExpenseSubmission } from "../../hooks";
 import {
   NumberKeypad,
@@ -55,6 +56,16 @@ export function AddExpenseBottomSheet({
     onSuccess,
     onClose,
   });
+
+  // Lock body scroll when bottom sheet is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

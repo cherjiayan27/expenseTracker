@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useEditExpenseForm, useExpenseUpdate } from "../../hooks";
 import { CategorySelectorsRow } from "../shared/form/CategorySelectorsRow";
 import { NoteInputRow } from "../shared/form/NoteInputRow";
@@ -54,6 +55,16 @@ export function EditExpenseModal({
     onSuccess,
     onClose,
   });
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
