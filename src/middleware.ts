@@ -11,24 +11,18 @@ export async function middleware(request: NextRequest) {
   const isAppRoute =
     pathname.startsWith("/dashboard") || pathname.startsWith("/categories") || pathname.startsWith("/budget");
 
+  // Skip auth check for landing page - let users see it first
+  // Authenticated users click "Get Started" → /login → redirected to /dashboard
+  if (isLandingPage) {
+    return NextResponse.next();
+  }
+
   const { supabase, response } = createMiddlewareClient(request);
 
   // Get session for auth checks
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  // Redirect authenticated users from landing page directly to dashboard
-  // This saves an extra page load cycle through /login
-  if (isLandingPage && session) {
-    const redirectUrl = new URL("/dashboard", request.url);
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  // Allow unauthenticated users to see landing page
-  if (isLandingPage) {
-    return response;
-  }
 
   // Redirect unauthenticated users away from protected routes
   if (isAppRoute && !session) {
