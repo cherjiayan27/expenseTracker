@@ -47,7 +47,7 @@ export async function markDebtsAsDone(
 
     const { error } = await supabase
       .from("expenses")
-      .update(updateData)
+      .update(updateData as never)
       .in("id", validation.data.ids)
       .eq("user_id", user.id);
 
