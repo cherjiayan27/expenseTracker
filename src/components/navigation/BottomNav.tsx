@@ -81,7 +81,7 @@ export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: Bott
                         fill
                         className="object-contain"
                         sizes="48px"
-                        unoptimized
+                        priority={index < 4}
                       />
                     </div>
                   </Link>
