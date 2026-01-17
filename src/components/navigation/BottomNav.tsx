@@ -3,11 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Plus } from "lucide-react";
-import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { getNavMascots } from "@/features/user/actions/getNavMascots";
-import { subscribeCategoryPreferencesUpdated } from "@/features/user/actions/categoryPreferencesEvents";
 import { getTodayDate } from "@/app/(app)/dashboard/lib/date-utils";
 import type { CategoryImage } from "@/features/categories/domain/category.types";
 
@@ -33,17 +31,6 @@ export function BottomNav({ onAddExpense, selectedDate, isHidden = false }: Bott
   
   // Get the currently selected date from URL or default to today
   const selectedDateParam = selectedDate || searchParams.get("date") || getTodayDate();
-
-  useEffect(() => {
-    // Listen for preference updates from Categories page
-    const unsubscribe = subscribeCategoryPreferencesUpdated(() => {
-      mutate('nav-mascots'); // Smart cache invalidation
-    });
-    
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   return (
     <div className={`fixed bottom-0 left-0 right-0 z-50 md:hidden ${

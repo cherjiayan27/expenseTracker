@@ -38,36 +38,36 @@ export type Database = {
         Row: {
           amount: number
           category: string | null
-          sub_category: string | null
-          owed_to: string | null
           created_at: string
           date: string
           description: string | null
           id: string
+          owed_to: string | null
+          sub_category: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           amount: number
           category?: string | null
-          sub_category?: string | null
-          owed_to?: string | null
           created_at?: string
           date?: string
           description?: string | null
           id?: string
+          owed_to?: string | null
+          sub_category?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           amount?: number
           category?: string | null
-          sub_category?: string | null
-          owed_to?: string | null
           created_at?: string
           date?: string
-          description?: string
+          description?: string | null
           id?: string
+          owed_to?: string | null
+          sub_category?: string | null
           updated_at?: string
           user_id?: string
         }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { mutate } from "swr";
 import { createBrowserClient } from "@/server/supabase/client.browser";
 import { CATEGORY_IMAGES } from "@/features/categories/domain/category.definitions";
 import type { ExpenseCategory, CategoryImage } from "@/features/categories/domain/category.types";
@@ -98,7 +99,15 @@ export function useCategoryPreferences() {
         if (result.error !== "User not authenticated") {
           console.error("Failed to save preferences:", result.error);
         }
+        return;
       }
+
+      const imageByPath = new Map(CATEGORY_IMAGES.map((img) => [img.path, img]));
+      const updatedMascots = paths
+        .map((path) => imageByPath.get(path))
+        .filter((img): img is CategoryImage => Boolean(img));
+
+      mutate("nav-mascots", updatedMascots, false);
     } catch (error) {
       console.error("Error persisting preferences:", error);
     } finally {
