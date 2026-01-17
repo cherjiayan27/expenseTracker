@@ -5,24 +5,30 @@ import { createMiddlewareClient } from "@/server/supabase/client.middleware";
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Define route types early to avoid unnecessary auth checks
-  const isPublicRoute = pathname === "/";
+  // Define route types
+  const isLandingPage = pathname === "/";
   const isAuthRoute = pathname.startsWith("/login");
   const isAppRoute =
-    pathname.startsWith("/dashboard") || pathname.startsWith("/categories");
-
-  // Skip auth check entirely for landing page - no session needed
-  if (isPublicRoute) {
-    return NextResponse.next();
-  }
+    pathname.startsWith("/dashboard") || pathname.startsWith("/categories") || pathname.startsWith("/budget");
 
   const { supabase, response } = createMiddlewareClient(request);
 
-  // Only call getSession() when we actually need to check auth
-  // This avoids 200-500ms network request for public navigation
+  // Get session for auth checks
   const {
     data: { session },
   } = await supabase.auth.getSession();
+
+  // Redirect authenticated users from landing page directly to dashboard
+  // This saves an extra page load cycle through /login
+  if (isLandingPage && session) {
+    const redirectUrl = new URL("/dashboard", request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Allow unauthenticated users to see landing page
+  if (isLandingPage) {
+    return response;
+  }
 
   // Redirect unauthenticated users away from protected routes
   if (isAppRoute && !session) {

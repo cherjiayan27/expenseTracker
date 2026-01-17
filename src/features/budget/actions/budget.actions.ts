@@ -11,9 +11,16 @@ import type { BudgetPreference } from "../domain/budget.types";
 export async function getBudgetPreference(): Promise<BudgetPreference | null> {
   try {
     const supabase = await createServerClient();
+    
+    // Get user first, then pass userId to avoid redundant getUser() in repository
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return null;
+    }
+    
     const repo = new PreferencesRepository(supabase);
-
-    const preference = await repo.getPreference("monthly_budget");
+    const preference = await repo.getPreferenceById(user.id, "monthly_budget");
 
     if (preference && preference.preference_value) {
       return preference.preference_value as BudgetPreference;

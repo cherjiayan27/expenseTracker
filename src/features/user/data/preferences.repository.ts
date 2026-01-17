@@ -6,6 +6,25 @@ export class PreferencesRepository {
   constructor(private supabase: SupabaseClient<Database, "public", any>) {} // eslint-disable-line @typescript-eslint/no-explicit-any
 
   /**
+   * Get a specific preference for a user by userId
+   * Use this when you already have the user ID to avoid an extra getUser() call
+   */
+  async getPreferenceById(userId: string, preferenceKey: PreferenceKey): Promise<UserPreference | null> {
+    const { data, error } = await this.supabase
+      .from("user_preferences")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("preference_key", preferenceKey)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as UserPreference | null;
+  }
+
+  /**
    * Get a specific preference for the current user
    */
   async getPreference(preferenceKey: PreferenceKey): Promise<UserPreference | null> {
@@ -15,18 +34,7 @@ export class PreferencesRepository {
       throw new Error("User not authenticated");
     }
 
-    const { data, error } = await this.supabase
-      .from("user_preferences")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("preference_key", preferenceKey)
-      .maybeSingle();
-
-    if (error) {
-      throw error;
-    }
-
-    return data as UserPreference | null;
+    return this.getPreferenceById(user.id, preferenceKey);
   }
 
   /**

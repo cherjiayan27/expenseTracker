@@ -4,9 +4,11 @@ import { getBudgetPreference } from "@/features/budget/actions/budget.actions";
 import { DashboardClient } from "@/features/dashboard";
 
 export default async function DashboardPage() {
-  // Fetch expenses and budget on the server
-  const expenses = await getExpenses();
-  const budgetPreference = await getBudgetPreference();
+  // Fetch expenses and budget in parallel for better performance
+  const [expenses, budgetPreference] = await Promise.all([
+    getExpenses(),
+    getBudgetPreference(),
+  ]);
 
   // Default to 50 SGD if no budget is set
   const monthlyBudget = budgetPreference?.monthlyBudget ?? 50.0;
