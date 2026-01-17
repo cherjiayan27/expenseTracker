@@ -8,10 +8,10 @@ export default function HomePage() {
       <div className="absolute inset-0 opacity-[0.25] pointer-events-none contrast-125 brightness-100 z-10">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <filter id="noiseFilter">
-            <feTurbulence 
-              type="fractalNoise" 
-              baseFrequency="0.6" 
-              numOctaves="3" 
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.6"
+              numOctaves="2"
               stitchTiles="stitch" />
           </filter>
           <rect width="100%" height="100%" filter="url(#noiseFilter)" />
@@ -20,20 +20,21 @@ export default function HomePage() {
 
       {/* Subtle Ambient Background Detail */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#F5F5F0] blur-[120px] opacity-60" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#F0F0EB] blur-[120px] opacity-40" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#F5F5F0] blur-[40px] opacity-60" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#F0F0EB] blur-[40px] opacity-40" />
       </div>
 
       {/* Main Content - Centered Container */}
       <main className="relative z-20 w-full max-w-3xl flex flex-col items-center my-auto scale-110 md:scale-125">
         {/* Animated Mascot - The Quiet Guardian */}
         <div className="mb-6 md:mb-8 relative group w-[28vw] max-w-[160px] min-w-[120px] aspect-square">
-          <div className="absolute inset-0 bg-[#E5E5E0] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000 rounded-full" />
-          <Image 
-            src="/images/dragonWithMoney3.png" 
-            alt="Quiet Finance Mascot" 
+          <div className="absolute inset-0 bg-[#E5E5E0] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full" />
+          <Image
+            src="/images/dragonWithMoney3.png"
+            alt="Quiet Finance Mascot"
             fill
-            className="relative z-10 opacity-80 group-hover:opacity-100 transition-all duration-1000 ease-in-out hover:scale-105 object-contain"
+            sizes="(max-width: 768px) 28vw, 160px"
+            className="relative z-10 opacity-80 group-hover:opacity-100 transition-all duration-300 ease-in-out hover:scale-105 object-contain"
             priority
           />
         </div>
