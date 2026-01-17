@@ -1,4 +1,4 @@
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import type { Expense } from "../../domain/expense.types";
 import { formatCurrency } from "../../domain/formatters/currency.formatter";
 import { getCategoryImage, getCategoryDisplayName } from "../../domain/expense.helpers";
@@ -17,6 +17,7 @@ export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [draftAmount, setDraftAmount] = useState("");
   const [isPending, startTransition] = useTransition();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Build the subtitle: "SubCategory • Description" or just one of them
   const subtitleParts = [subCategory, description].filter(Boolean);
@@ -34,6 +35,7 @@ export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
   };
 
   const cancelEdit = () => {
+    inputRef.current?.blur();
     setDraftAmount(String(amount));
     setIsEditingAmount(false);
   };
@@ -48,6 +50,7 @@ export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
     }
 
     if (nextAmount === amount) {
+      inputRef.current?.blur();
       setIsEditingAmount(false);
       return;
     }
@@ -60,6 +63,7 @@ export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
       if (!result.success) {
         alert(`Failed to update amount: ${result.error}`);
       }
+      inputRef.current?.blur();
       setIsEditingAmount(false);
     });
   };
@@ -105,7 +109,9 @@ export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
           onClick={(event) => event.stopPropagation()}
         >
           <input
-            className="w-20 rounded-md border border-gray-200 px-2 py-1 text-right text-sm font-semibold text-black focus:border-gray-400 focus:outline-none"
+            ref={inputRef}
+            className="w-20 rounded-md border border-gray-200 px-2 py-1 text-right font-semibold text-black focus:border-gray-400 focus:outline-none"
+            style={{ fontSize: '16px' }}
             value={draftAmount}
             onChange={(event) => setDraftAmount(event.target.value)}
             onBlur={commitEdit}
