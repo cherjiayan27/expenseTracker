@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Expense } from "../../domain/expense.types";
-import { ExpenseCard } from "./ExpenseCard";
+import { SwipeableExpenseCard } from "./SwipeableExpenseCard";
 import { ExpenseListLoading } from "./ExpenseListLoading";
 import { ExpenseListEmpty } from "./ExpenseListEmpty";
 import { EditExpenseModal } from "../edit-expense";
@@ -48,10 +48,11 @@ export function ExpenseList({ expenses, title = "Wins in life", isLoading = fals
 
         <div className="flex flex-col gap-6 pb-4">
           {expenses.map((expense) => (
-            <ExpenseCard
+            <SwipeableExpenseCard
               key={expense.id}
               expense={expense}
               onClick={() => setSelectedExpense(expense)}
+              onDeleteSuccess={onSuccess}
             />
           ))}
         </div>
