@@ -1,73 +1,67 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useBudget } from "../actions/useBudget";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 
 export function BudgetForm() {
-  const { budget, isLoaded, isSaving, isAuthenticated, saveBudget, deleteBudget } = useBudget();
-  const [monthlyBudget, setMonthlyBudget] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
+  const { budget, isLoaded, isSaving, isAuthenticated, saveBudget } = useBudget();
+  const [isEditing, setIsEditing] = useState(false);
+  const [monthlyBudget, setMonthlyBudget] = useState<number>(0);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const SLIDER_MAX = 5000;
+
+  // Memoize slider gradient style to avoid recalculation on every render
+  const sliderStyle = useMemo(() => ({
+    background: `linear-gradient(to right, black 0%, black ${(monthlyBudget / SLIDER_MAX) * 100}%, #F3F4F6 ${(monthlyBudget / SLIDER_MAX) * 100}%, #F3F4F6 100%)`
+  }), [monthlyBudget]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+    };
+  }, []);
 
   // Initialize form with existing budget
   useEffect(() => {
     if (budget) {
-      setMonthlyBudget(budget.monthlyBudget.toString());
+      setMonthlyBudget(budget.monthlyBudget);
+    } else {
+      setMonthlyBudget(1200); // Default value as per image
     }
   }, [budget]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const budgetValue = parseFloat(monthlyBudget);
-
-    if (isNaN(budgetValue) || budgetValue <= 0) {
+  const handleSubmit = async () => {
+    if (monthlyBudget <= 0) {
       setErrorMessage("Please enter a valid budget amount greater than 0");
       setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+      errorTimeoutRef.current = setTimeout(() => setShowError(false), 3000);
       return;
     }
 
-    const result = await saveBudget(budgetValue, "SGD");
+    const result = await saveBudget(monthlyBudget, "SGD");
 
     if (result.success) {
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      setIsEditing(false);
     } else {
       setErrorMessage(result.error || "Failed to save budget");
       setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete your budget?")) {
-      return;
-    }
-
-    const result = await deleteBudget();
-
-    if (result.success) {
-      setMonthlyBudget("");
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
-    } else {
-      setErrorMessage(result.error || "Failed to delete budget");
-      setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+      errorTimeoutRef.current = setTimeout(() => setShowError(false), 3000);
     }
   };
 
   if (!isLoaded) {
     return (
-      <Card className="p-6">
+      <div className="flex items-center justify-center p-12">
         <p className="text-gray-600">Loading...</p>
-      </Card>
+      </div>
     );
   }
 
@@ -79,90 +73,110 @@ export function BudgetForm() {
     );
   }
 
+  // View Mode: If budget exists and we're not editing
+  if (budget && !isEditing) {
+    return (
+      <div className="max-w-md mx-auto px-4 pb-16 pt-0">
+        {/* Error Toast */}
+        {showError && (
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100]">
+            <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 shadow-lg whitespace-nowrap">
+              <p className="text-sm font-medium text-red-900">{errorMessage}</p>
+            </div>
+          </div>
+        )}
+        <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl font-bold text-gray-200 tracking-tight">
+                SGD
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMonthlyBudget(budget.monthlyBudget);
+                setIsEditing(true);
+              }}
+              className="text-8xl font-black text-gray-900 tracking-tighter hover:opacity-90 transition-opacity"
+              title="Edit Budget"
+            >
+              {budget.monthlyBudget.toLocaleString("en-SG")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Edit/Set Mode
   return (
-    <div className="space-y-4">
-      {/* Success Toast */}
-      {showSuccess && (
-        <div className="fixed top-20 right-4 z-50 animate-in slide-in-from-top">
-          <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 shadow-lg">
-            <p className="text-sm font-medium text-green-900">
-              Budget saved successfully!
-            </p>
+    <div className="max-w-md mx-auto px-4 pb-28 pt-0">
+      <div className="space-y-12">
+        <div className="text-center">
+          <div className="flex flex-col items-center justify-center mb-8">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl font-bold text-gray-200 tracking-tight">SGD</span>
+            </div>
+            <input
+              type="number"
+              inputMode="numeric"
+              min="0"
+              step="10"
+              value={Number.isFinite(monthlyBudget) ? monthlyBudget : 0}
+              onChange={(e) => setMonthlyBudget(Number(e.target.value))}
+              className="w-full text-center text-7xl font-bold text-gray-900 tracking-tight bg-transparent outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
           </div>
-        </div>
-      )}
 
-      {/* Error Toast */}
-      {showError && (
-        <div className="fixed top-20 right-4 z-50 animate-in slide-in-from-top">
-          <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 shadow-lg">
-            <p className="text-sm font-medium text-red-900">{errorMessage}</p>
-          </div>
-        </div>
-      )}
-
-      <Card className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="monthlyBudget" className="text-base font-medium text-gray-900">
-              Monthly Budget
-            </Label>
-            <div className="flex gap-2">
-              <div className="flex items-center bg-gray-100 px-4 rounded-l-md border border-r-0 border-gray-300">
-                <span className="text-gray-700 font-medium">SGD</span>
-              </div>
-              <Input
-                id="monthlyBudget"
-                type="number"
-                step="0.01"
+          <div className="px-4">
+            <div className="relative h-12 flex items-center">
+              <input
+                type="range"
                 min="0"
-                placeholder="0.00"
+                max={SLIDER_MAX}
+                step="10"
                 value={monthlyBudget}
-                onChange={(e) => setMonthlyBudget(e.target.value)}
-                className="flex-1 rounded-l-none"
-                disabled={isSaving}
+                onChange={(e) => setMonthlyBudget(Number(e.target.value))}
+                className="w-full h-3 bg-gray-100 rounded-full appearance-none cursor-pointer accent-black
+                  [&::-webkit-slider-runnable-track]:rounded-full
+                  [&::-webkit-slider-runnable-track]:h-3
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:w-8
+                  [&::-webkit-slider-thumb]:h-8
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-black
+                  [&::-webkit-slider-thumb]:border-4
+                  [&::-webkit-slider-thumb]:border-white
+                  [&::-webkit-slider-thumb]:shadow-lg
+                  [&::-webkit-slider-thumb]:-mt-[10px]"
+                style={sliderStyle}
               />
             </div>
-            <p className="text-sm text-gray-600">
-              Set your monthly spending limit to track your expenses better.
-            </p>
           </div>
-
-          <div className="flex gap-3">
+        </div>
+      </div>
+      <div className="fixed inset-x-0 bottom-0 bg-white/90 backdrop-blur-sm border-t border-gray-100">
+        <div className="max-w-md mx-auto px-4 py-4 flex gap-3">
+          {budget && (
             <Button
-              type="submit"
-              disabled={isSaving || !monthlyBudget}
-              className="flex-1"
+              variant="outline"
+              onClick={() => setIsEditing(false)}
+              disabled={isSaving}
+              className="flex-1 h-12 rounded-2xl"
             >
-              {isSaving ? "Saving..." : budget ? "Update Budget" : "Set Budget"}
+              Cancel
             </Button>
-
-            {budget && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleDelete}
-                disabled={isSaving}
-                className="px-6"
-              >
-                Delete
-              </Button>
-            )}
-          </div>
-        </form>
-      </Card>
-
-      {budget && (
-        <Card className="p-6 bg-blue-50 border-blue-200">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-blue-900">Current Budget</p>
-            <p className="text-3xl font-bold text-blue-900">
-              {budget.currency} {budget.monthlyBudget.toLocaleString('en-SG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-            <p className="text-xs text-blue-700">per month</p>
-          </div>
-        </Card>
-      )}
+          )}
+          <Button
+            onClick={handleSubmit}
+            disabled={isSaving || monthlyBudget <= 0 || !!(budget && monthlyBudget === budget.monthlyBudget)}
+            className="flex-1 h-12 text-base font-bold rounded-2xl bg-black hover:bg-gray-800 text-white transition-all shadow-md"
+          >
+            {isSaving ? "Saving..." : budget ? "Update Budget" : "Confirm Budget"}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

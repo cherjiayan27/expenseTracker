@@ -1,16 +1,15 @@
-"use client";
-
 import { BudgetForm } from "@/features/budget";
 
 export default function BudgetPage() {
   return (
     <div className="min-h-screen bg-white pb-32 relative">
       {/* Main Content */}
-      <div className="relative z-10 space-y-12 pt-3">
+      <div className="relative z-10 space-y-8 pt-8">
         <section>
-          <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Budget</h1>
-            <p className="mt-2 text-gray-600">Set and manage your monthly budget</p>
+          <div className="mb-6 text-center px-4">
+            <div className="flex items-center justify-center gap-3">
+              <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Monthly Budget</h1>
+            </div>
           </div>
 
           <BudgetForm />
