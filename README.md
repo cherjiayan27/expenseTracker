@@ -154,42 +154,7 @@ The `docs/` folder contains reference materials for AI assistants working on thi
 - `npm test` - Run unit tests
 - `npm run test:coverage` - Run tests with coverage
 - `npm run test:e2e` - Run E2E tests
-## Deployment
-
-This application is deployed to production on Vercel with Supabase and Twilio.
-
-**Production URL:** [Will be added after deployment]
-
-**Prerequisites:**
-- GitHub account
-- Supabase production project
-- Twilio account with phone number and SMS configured
-- Vercel account
-
-**Quick Deploy:**
-
-See [DEPLOYMENT.md](./docs/deployment/DEPLOYMENT.md) for complete deployment instructions.
-
-**Key Steps:**
-1. Push database migrations: `npx supabase db push`
-2. Deploy to Vercel from GitHub
-3. Configure environment variables in Vercel
-4. Update Supabase redirect URLs
-5. Test production deployment
-
-**Environment Variables:**
-
-See [ENV-PRODUCTION.md](./docs/deployment/ENV-PRODUCTION.md) for production environment configuration.
-
-**Documentation:**
-- [Complete Deployment Guide](./docs/deployment/DEPLOYMENT.md)
-- [Environment Variables Reference](./docs/deployment/ENV-PRODUCTION.md)
-- [Migration Deployment Guide](./docs/deployment/MIGRATION-DEPLOYMENT.md)
-- [Vercel Setup Guide](./docs/deployment/VERCEL-DEPLOYMENT.md)
-- [Testing Checklist](./docs/deployment/TESTING-CHECKLIST.md)
 
 ## License
 
 Private project
-
-
