@@ -22,42 +22,45 @@ This project uses **Vertical Slice Architecture** where each feature has:
 
 ## Getting Started
 
-### Prerequisites
+**📖 For complete setup instructions, see [SETUP.md](./docs/SETUP.md)**
 
-- Node.js 18+ 
-- npm or pnpm
-- Supabase CLI (for local development)
+### Quick Start
 
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-
+1. **Clone and install**:
 ```bash
+git clone <repository-url>
+cd expenseTracker-2
 npm install
 ```
 
-3. Copy environment variables:
-
-```bash
-cp .env.local.example .env.local
-```
-
-4. Start Supabase locally:
-
+2. **Start Supabase** (requires Docker Desktop running):
 ```bash
 supabase start
 ```
 
-5. Update `.env.local` with your Supabase credentials from the output above
+3. **Create `.env.local`** with local credentials:
+```bash
+cat > .env.local << 'EOF'
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+SUPABASE_SECRET_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+EOF
+```
 
-6. Run the development server:
-
+4. **Start dev server**:
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. **Open** http://localhost:3000
+
+### Important URLs
+
+- **App**: http://localhost:3000
+- **Supabase Studio**: http://127.0.0.1:54323
+- **Email Testing**: http://127.0.0.1:54324
 
 ## Database Setup
 
@@ -122,6 +125,25 @@ supabase/
   seed.sql            # Seed data
 ```
 
+## Documentation
+
+The `docs/` folder contains reference materials for AI assistants working on this project:
+
+| Folder/File | Purpose |
+|-------------|---------|
+| `docs/scaffold-guide/` | Blueprint for creating new projects from scratch with the same infrastructure |
+| `docs/best-practices/` | Coding patterns and principles AI should follow when writing code |
+| `docs/performance-improvement/` | Context on past optimizations - read before making performance changes |
+| `docs/SETUP.md` | How to run this project after cloning |
+| `docs/AI-QUICK-REF.md` | Quick reference for this specific codebase |
+
+**How AI should use these:**
+
+1. **Making changes** → Check `best-practices/` for correct patterns
+2. **Optimizing performance** → Read `performance-improvement/` first, then cross-reference `best-practices/`
+3. **Creating new project** → Follow `scaffold-guide/` step-by-step
+4. **Understanding codebase** → Start with `AI-QUICK-REF.md`
+
 ## Scripts
 
 - `npm run dev` - Start development server
@@ -132,7 +154,6 @@ supabase/
 - `npm test` - Run unit tests
 - `npm run test:coverage` - Run tests with coverage
 - `npm run test:e2e` - Run E2E tests
-
 ## Deployment
 
 This application is deployed to production on Vercel with Supabase and Twilio.
@@ -167,26 +188,8 @@ See [ENV-PRODUCTION.md](./docs/deployment/ENV-PRODUCTION.md) for production envi
 - [Vercel Setup Guide](./docs/deployment/VERCEL-DEPLOYMENT.md)
 - [Testing Checklist](./docs/deployment/TESTING-CHECKLIST.md)
 
-## Phase 1 Features (MVP)
-
-- ✅ Phone OTP Authentication
-- ✅ Dashboard
-- ✅ Create custom expense
-- ✅ List expenses
-- ✅ Rate limiting for OTP
-- ✅ Unit and E2E tests
-- ✅ Database migrations
-
-## Phase 2 (Future)
-
-- Recurring expenses (subscriptions)
-- Shortcut expenses (frequent purchases)
-- Event-driven expenses (one-time events)
-- Modal routes (parallel/intercepting)
-- Caching optimizations
-- Monitoring (Sentry)
-
 ## License
 
 Private project
+
 

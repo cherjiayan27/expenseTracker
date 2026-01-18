@@ -1,0 +1,232 @@
+# Expense Tracker - Cursor AI Rules
+
+## Project Setup
+
+### When user asks to "set up", "clone and setup", or "get started":
+
+1. **Check prerequisites**:
+   - Verify Node.js is installed: `node --version`
+   - Verify Supabase CLI: `supabase --version`
+   - Check if Docker is running (required for Supabase)
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start Supabase local** (if not already running):
+   ```bash
+   supabase start
+   ```
+
+4. **Create `.env.local`** with default local development keys:
+   ```bash
+   cat > .env.local << 'EOF'
+   NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+   SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+   SUPABASE_SECRET_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+   EOF
+   ```
+
+5. **Start development server**:
+   ```bash
+   npm run dev
+   ```
+
+6. **Inform user** of available URLs:
+   - App: http://localhost:3000
+   - Supabase Studio: http://127.0.0.1:54323
+   - Email Testing: http://127.0.0.1:54324
+
+### When user asks to "connect to supabase" or "start supabase":
+
+1. Start Supabase: `supabase start`
+2. Create/update `.env.local` with credentials (see above)
+3. Verify database migrations are applied: `supabase db diff`
+
+## Project Architecture
+
+### Code Organization
+- **Vertical Slice Architecture**: Each feature in `src/features/` is self-contained
+- **Feature structure**:
+  - `domain/` - Business logic (pure TypeScript, no React/Next)
+  - `data/` - Database queries and data mappers
+  - `actions/` - Server Actions and client-side hooks
+  - `ui/` - React components
+
+### Supabase Clients
+The project uses THREE different Supabase clients:
+- `src/server/supabase/client.browser.ts` - Client Components (CSR)
+- `src/server/supabase/client.server.ts` - Server Components, Server Actions
+- `src/server/supabase/client.middleware.ts` - Middleware (Edge Runtime)
+
+**Always use the correct client for the context!**
+
+### Environment Variables
+- Validated via `src/shared/config/env.ts` using Zod
+- Uses both `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (same value)
+- Server-only vars: `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_SECRET_KEY`
+
+## Development Workflow
+
+### Database Changes
+1. Create migration: `supabase migration new <name>`
+2. Write SQL in `supabase/migrations/`
+3. Apply: `supabase db reset`
+4. Verify: `supabase db diff`
+
+### Adding Features
+1. Create feature directory in `src/features/`
+2. Follow vertical slice structure (domain, data, actions, ui)
+3. Export public API from `index.ts`
+4. Keep domain logic pure (no React/Next imports)
+
+### Testing
+- Unit tests: `npm test` (Vitest)
+- E2E tests: `npm run test:e2e` (Playwright)
+- Type check: `npm run typecheck`
+- Lint: `npm run lint`
+
+## Common Tasks
+
+### Reset Database
+```bash
+supabase db reset
+```
+This drops tables, reruns migrations, and applies seed data.
+
+### Check Supabase Status
+```bash
+supabase status
+```
+
+### View Supabase Logs
+```bash
+supabase logs
+```
+
+### Stop Supabase
+```bash
+supabase stop
+```
+
+## Test Authentication
+
+### Test Phone Numbers (Local Development)
+Configured in `supabase/config.toml`:
+- `+6512345678` → OTP: `123456`
+- `+6587654321` → OTP: `123456`
+- `+6588888888` → OTP: `123456`
+- `+6599999999` → OTP: `123456`
+
+## Documentation
+
+### Primary Reference
+**Always refer to [SETUP.md](./docs/SETUP.md) for complete setup instructions**
+
+### Additional Docs
+- `docs/ARCHITECTURE-NOTES.md` - Architecture decisions
+- `docs/README.md` - Documentation index
+- `docs/testing/` - Testing guides
+- `docs/steps/` - Feature implementation steps
+
+## Troubleshooting
+
+### Supabase won't start
+1. Check Docker is running
+2. Run: `supabase stop --no-backup && supabase start`
+
+### Port conflicts
+1. Check which service is using the port: `lsof -i :54321`
+2. Stop Supabase: `supabase stop`
+3. Restart: `supabase start`
+
+### Permission denied on .env.local
+```bash
+chmod 644 .env.local
+```
+
+### Environment variables not loading
+1. Restart dev server
+2. Verify `.env.local` exists and has correct format
+3. Check no syntax errors in `.env.local`
+
+## Code Style
+
+### TypeScript
+- Strict mode enabled
+- Use type inference where possible
+- Define explicit types for function parameters and return values
+- Use Zod for runtime validation
+
+### Naming Conventions
+- Components: PascalCase
+- Files: kebab-case for utilities, PascalCase for components
+- Server Actions: descriptive verb phrases (e.g., `createExpense`, `deleteExpense`)
+- Domain functions: pure, testable functions
+
+### Imports
+- Use absolute imports with `@/` prefix
+- Group imports: external → internal → relative
+- Keep imports organized by feature
+
+## AI Assistant Behavior
+
+### When helping with this project:
+1. **Always check SETUP.md first** for setup-related questions
+2. **Use the correct Supabase client** for the context (browser/server/middleware)
+3. **Follow vertical slice architecture** when adding features
+4. **Keep domain logic pure** - no React/Next/Supabase in domain/
+5. **Add tests** for new features (unit + E2E where applicable)
+6. **Update migrations** for schema changes, don't modify existing migrations
+7. **Reference existing patterns** - look at similar features before implementing
+
+### Don't:
+- Create new Supabase client patterns (use existing ones)
+- Mix client types (browser client in server components, etc.)
+- Put React/Next code in domain layer
+- Modify existing migrations (create new ones instead)
+- Commit `.env.local` (it's gitignored for good reason)
+
+## Quick Reference
+
+### File Structure
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (app)/             # Protected routes
+│   └── (public)/          # Public routes
+├── components/            # Shared UI components
+├── features/              # Feature modules (vertical slices)
+├── server/               # Server-only code
+│   └── supabase/         # Supabase client variants
+├── shared/               # Shared utilities
+│   ├── config/           # Configuration (env, etc.)
+│   └── types/            # Shared types
+└── lib/                  # Utilities
+
+supabase/
+├── config.toml           # Supabase configuration
+├── migrations/           # SQL migrations (timestamped)
+└── seed.sql              # Seed data
+
+tests/
+├── unit/                 # Unit tests (Vitest)
+└── e2e/                  # E2E tests (Playwright)
+
+docs/                     # Documentation
+```
+
+### Scripts
+- `npm run dev` - Development server
+- `npm run build` - Production build
+- `npm test` - Unit tests
+- `npm run test:e2e` - E2E tests
+- `npm run typecheck` - Type checking
+- `npm run lint` - Linting
+
+---
+
+**Note**: This file helps Cursor AI understand the project structure and setup. Always refer to SETUP.md for complete human-readable documentation.
