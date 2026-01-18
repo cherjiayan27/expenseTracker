@@ -73,6 +73,48 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          amount: number
+          created_at: string
+          expire_date: string | null
+          id: string
+          is_active: boolean
+          is_expiring: boolean
+          name: string
+          next_payment_date: string
+          period: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          expire_date?: string | null
+          id?: string
+          is_active?: boolean
+          is_expiring?: boolean
+          name: string
+          next_payment_date: string
+          period: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          expire_date?: string | null
+          id?: string
+          is_active?: boolean
+          is_expiring?: boolean
+          name?: string
+          next_payment_date?: string
+          period?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           created_at: string

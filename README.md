@@ -107,6 +107,7 @@ src/
   features/            # Vertical slices
     auth/
     expenses/
+    subscription/      # NEW: Subscription tracking feature
     recurring-expenses/
     shortcuts/
     events/
@@ -155,6 +156,3 @@ The `docs/` folder contains reference materials for AI assistants working on thi
 - `npm run test:coverage` - Run tests with coverage
 - `npm run test:e2e` - Run E2E tests
 
-## License
-
-Private project
