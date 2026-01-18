@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useEditExpenseForm, useExpenseUpdate } from "../../hooks";
 import { CategorySelectorsRow } from "../shared/form/CategorySelectorsRow";
 import { NoteInputRow } from "../shared/form/NoteInputRow";
@@ -22,6 +22,9 @@ export function EditExpenseModal({
   onClose,
   onSuccess,
 }: EditExpenseModalProps) {
+  // Ref to store scroll position (prevents re-renders - Vercel Section 5.1)
+  const scrollPositionRef = useRef(0);
+
   // Form state management
   const {
     amount,
@@ -56,13 +59,28 @@ export function EditExpenseModal({
     onClose,
   });
 
-  // Lock body scroll when modal is open
+  // Prevent underlying page scroll when modal is open (iOS Safari fix)
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    }
+    if (!isOpen) return;
+
+    // 1. Save current scroll position
+    scrollPositionRef.current = window.scrollY;
+
+    // 2. Lock scroll on body (modal has full-screen backdrop, so use body instead of scroll container)
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPositionRef.current}px`;
+    document.body.style.width = '100%';
+
+    // 3. Cleanup: restore scroll position when modal closes
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      
+      // Restore original scroll position
+      window.scrollTo(0, scrollPositionRef.current);
     };
   }, [isOpen]);
 

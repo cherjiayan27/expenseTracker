@@ -10,7 +10,7 @@ interface DashboardLayoutProps {
  */
 export function DashboardLayout({ header, children }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-white pb-32">
+    <div className="min-h-screen bg-white pb-32" data-scroll-container>
       {/* Fixed Header */}
       <div className="fixed top-[57px] left-0 right-0 bg-white z-40 px-4 pt-6 pb-2">
         <div className="max-w-2xl mx-auto">{header}</div>
