@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Expense } from "../../domain/expense.types";
+import { formatCurrency } from "../../domain/formatters/currency.formatter";
 import { SwipeableExpenseCard } from "./SwipeableExpenseCard";
 import { ExpenseListLoading } from "./ExpenseListLoading";
 import { ExpenseListEmpty } from "./ExpenseListEmpty";
@@ -13,14 +14,6 @@ type ExpenseListProps = {
   isLoading?: boolean;
   totalSpending?: number;
   onSuccess?: () => void;
-};
-
-// Move formatCurrency outside component to avoid recreation on every render
-const formatCurrency = (amount: number) => {
-  return amount.toLocaleString('en-SG', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
 };
 
 export function ExpenseList({ expenses, title = "Wins in life", isLoading = false, totalSpending, onSuccess }: ExpenseListProps) {
@@ -41,7 +34,7 @@ export function ExpenseList({ expenses, title = "Wins in life", isLoading = fals
           <h4 className="text-gray-500 font-medium text-sm">{title}</h4>
           {totalSpending !== undefined && (
             <span className="text-gray-700 font-semibold text-sm">
-              ${formatCurrency(totalSpending)}
+              {formatCurrency(totalSpending)}
             </span>
           )}
         </div>

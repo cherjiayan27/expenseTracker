@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
+import { formatCurrency } from "@/features/expenses/domain/formatters/currency.formatter";
 
 interface BudgetProgressProps {
   totalMonthlySpending?: number;
@@ -27,13 +28,6 @@ export function BudgetProgress({
     if (progressPercentage >= 100) return "#EF4444"; // red-500
     if (progressPercentage >= 80) return "#F59E0B"; // amber-500
     return "#000000"; // black
-  };
-
-  const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('en-SG', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
   };
 
   return (
@@ -65,10 +59,10 @@ export function BudgetProgress({
         <div className="text-center z-10 translate-y-8">
           <h3 className="text-base font-sans font-medium text-black mb-0">Total Spending</h3>
           <div className="text-6xl font-sans font-medium text-black leading-tight">
-            ${formatCurrency(totalMonthlySpending)}
+            {formatCurrency(totalMonthlySpending)}
           </div>
           <p className="text-xs text-gray-500 font-sans flex items-center justify-center gap-0.5 mt-1">
-            of your ${formatCurrency(monthlyBudget)} monthly budget <ChevronRight className="h-3 w-3" />
+            of your {formatCurrency(monthlyBudget)} monthly budget <ChevronRight className="h-3 w-3" />
           </p>
         </div>
       </div>

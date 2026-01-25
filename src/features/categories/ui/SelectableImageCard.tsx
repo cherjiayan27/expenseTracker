@@ -31,7 +31,6 @@ function SelectableImageCardComponent({ image, onSelect, isSelected = false }: S
           <Image
             src={image.path}
             alt={image.name}
-            unoptimized
             fill
             className="object-contain transition-transform duration-300 group-hover:scale-110"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 16vw"

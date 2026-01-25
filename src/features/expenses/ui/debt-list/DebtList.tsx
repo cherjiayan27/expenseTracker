@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import type { Expense } from "../../domain/expense.types";
+import { formatCurrency } from "../../domain/formatters/currency.formatter";
 import { DebtCard } from "./DebtCard";
 import { calculateTotal } from "../../domain/calculations/expense-totals";
 import { markDebtsAsDone } from "@/features/expenses/actions/markDebtsAsDone";
@@ -9,14 +10,6 @@ import { markDebtsAsDone } from "@/features/expenses/actions/markDebtsAsDone";
 type DebtListProps = {
   debts: Expense[];
   onMultiSelectChange?: (isActive: boolean) => void;
-};
-
-// Move formatCurrency outside component to avoid recreation on every render
-const formatCurrency = (amount: number) => {
-  return amount.toLocaleString('en-SG', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
 };
 
 export function DebtList({ debts, onMultiSelectChange }: DebtListProps) {
@@ -83,7 +76,7 @@ export function DebtList({ debts, onMultiSelectChange }: DebtListProps) {
         <h4 className="text-gray-500 font-medium text-sm">Debts</h4>
         <div className="flex items-center gap-2">
           <span className="text-red-600 font-semibold text-sm">
-            ${formatCurrency(totalDebts)}
+            {formatCurrency(totalDebts)}
           </span>
           <button
             type="button"

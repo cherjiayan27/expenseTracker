@@ -1,4 +1,4 @@
-import { useState, useTransition, useRef } from "react";
+import { useState, useTransition, useRef, memo } from "react";
 import type { Expense } from "../../domain/expense.types";
 import { formatCurrency } from "../../domain/formatters/currency.formatter";
 import { getCategoryImage, getCategoryDisplayName } from "../../domain/expense.helpers";
@@ -10,7 +10,7 @@ type ExpenseCardProps = {
   onClick?: () => void;
 };
 
-export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
+export const ExpenseCard = memo(function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
   const { amount, description, category, subCategory } = expense;
   const categoryImage = getCategoryImage(category, subCategory);
   const categoryName = getCategoryDisplayName(category);
@@ -147,5 +147,5 @@ export function ExpenseCard({ expense, onClick }: ExpenseCardProps) {
       )}
     </div>
   );
-}
+});
 
