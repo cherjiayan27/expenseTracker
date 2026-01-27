@@ -9,10 +9,6 @@
 // export * from "./actions/useCreateEvent";
 // export * from "./actions/useEvents";
 
-// UI exports will go here
-// export * from "./ui/EventCard";
-// export * from "./ui/EventList";
-
-// Placeholder export to prevent empty module error
-export {};
+// UI exports
+export * from "./ui";
 

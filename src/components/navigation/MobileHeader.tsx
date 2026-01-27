@@ -75,6 +75,13 @@ export function MobileHeader() {
               >
                 Subscription
               </Link>
+              <Link
+                href="/events"
+                className="text-2xl font-medium text-gray-900 hover:text-gray-600 transition-colors flex items-center gap-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Events
+              </Link>
             </nav>
 
             {/* Bottom Section - Logout */}
