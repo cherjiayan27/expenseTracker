@@ -59,8 +59,14 @@ export function BudgetForm() {
 
   if (!isLoaded) {
     return (
-      <div className="flex items-center justify-center p-12">
-        <p className="text-gray-600">Loading...</p>
+      <div className="max-w-md mx-auto px-4 pb-16 pt-0">
+        <div className="flex flex-col items-center">
+          <div className="h-8 w-16 bg-gray-200 rounded animate-pulse mb-2" />
+          <div className="h-24 w-48 bg-gray-200 rounded animate-pulse" />
+          <div className="w-full mt-8 px-4">
+            <div className="h-3 w-full bg-gray-200 rounded-full animate-pulse" />
+          </div>
+        </div>
       </div>
     );
   }
