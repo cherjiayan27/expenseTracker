@@ -1,4 +1,4 @@
-import { useState, useTransition, useRef, useEffect, memo } from "react";
+import { useState, useTransition, useRef, memo } from "react";
 import type { Expense } from "../../domain/expense.types";
 import { formatCurrency } from "../../domain/formatters/currency.formatter";
 import { getCategoryImage, getCategoryDisplayName } from "../../domain/expense.helpers";
@@ -18,41 +18,6 @@ export const ExpenseCard = memo(function ExpenseCard({ expense, onClick }: Expen
   const [draftAmount, setDraftAmount] = useState("");
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
-  // Ref to store scroll position (prevents re-renders - Vercel Section 5.1)
-  const scrollPositionRef = useRef(0);
-
-  // Prevent underlying page scroll when editing amount (iOS Safari fix)
-  useEffect(() => {
-    if (!isEditingAmount) return;
-
-    // 1. Save current scroll position
-    scrollPositionRef.current = window.scrollY;
-
-    // 2. Find the scrollable container
-    const scrollContainer = document.querySelector('[data-scroll-container]') as HTMLElement;
-
-    if (!scrollContainer) {
-      console.warn('Scroll container with [data-scroll-container] not found');
-      return;
-    }
-
-    // 3. Lock scroll with CSS (prevents iOS Safari from scrolling underlying page)
-    scrollContainer.style.overflow = 'hidden';
-    scrollContainer.style.position = 'fixed';
-    scrollContainer.style.top = `-${scrollPositionRef.current}px`;
-    scrollContainer.style.width = '100%';
-
-    // 4. Cleanup: restore scroll position when editing ends
-    return () => {
-      scrollContainer.style.overflow = '';
-      scrollContainer.style.position = '';
-      scrollContainer.style.top = '';
-      scrollContainer.style.width = '';
-
-      // Restore original scroll position
-      window.scrollTo(0, scrollPositionRef.current);
-    };
-  }, [isEditingAmount]);
 
   // Build the subtitle: "SubCategory • Description" or just one of them
   const subtitleParts = [subCategory, description].filter(Boolean);
